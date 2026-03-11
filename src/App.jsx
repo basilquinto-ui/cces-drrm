@@ -21,7 +21,7 @@ export default function App() {
   const [status, setStatus] = useState('normal')
 
   useEffect(() => {
-    setTimeout(() => setSplash(false), 2500)
+    setTimeout(() => setSplash(false), 4500)
     loadWeather()
     const interval = setInterval(loadWeather, 10 * 60 * 1000)
     return () => clearInterval(interval)
