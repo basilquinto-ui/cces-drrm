@@ -146,7 +146,7 @@ export default function Login({ onLogin }) {
 
       {/* Footer */}
       <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 11, marginTop: 24, position: 'relative', zIndex: 2, textAlign: 'center' }}>
-        CCES DRRM Portal v2.0 · QC District XVII · Est. 1952
+        CCES DRRM Portal v2.0 · QC District VIII · Est. 1952
       </p>
     </div>
   )
