@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Bell, ClipboardList, MapPinned, Phone, ShieldCheck, UserCheck, type LucideIcon } from 'lucide-react-native';
-import { AppCard, EmptyState, ErrorState, LoadingState, Screen, SectionHeader, StatusBadge } from '@/components';
+import { AppCard, BrandMark, EmptyState, ErrorState, LoadingState, Screen, SectionHeader, StatusBadge } from '@/components';
+import { brand } from '@/constants/brand';
 import { theme } from '@/constants/theme';
 import { getDashboardMetrics, type DashboardMetrics } from '@/services/dashboard';
 
@@ -47,10 +48,10 @@ export default function DashboardScreen() {
 
   return (
     <Screen>
-      <SectionHeader title="CCES DRRM Command Center" subtitle="School safety status and emergency operations" />
+      <SectionHeader title={brand.appName} subtitle={brand.tagline} />
 
       <AppCard variant="highlight">
-        <View style={styles.statusTitleRow}><ShieldCheck size={18} color={theme.colors.info} strokeWidth={2.2} /><Text style={styles.metricLabel}>School Safety Status</Text></View>
+        <View style={styles.statusTitleRow}><BrandMark size="small" /><Text style={styles.metricLabel}>School Safety Status</Text></View>
         <StatusBadge label="Normal Operations" tone="info" />
         <Text style={styles.metricValue}>No active emergency reported</Text>
       </AppCard>

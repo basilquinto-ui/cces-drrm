@@ -1,12 +1,16 @@
 {
   "expo": {
     "name": "CCES DRRM",
-    "slug": "cces-drrm-mobile",
-    "scheme": "ccesdrrm",
+    "slug": "cces-drrm",
+    "scheme": "cces-drrm",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "plugins": ["expo-router", "expo-secure-store", "expo-image-picker"],
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-image-picker"
+    ],
     "experiments": {
       "typedRoutes": true
     }
