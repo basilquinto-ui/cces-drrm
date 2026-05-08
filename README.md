@@ -28,7 +28,7 @@ VITE_WEATHER_API_KEY=your_openweathermap_key
 - This creates all tables + seeds default data
 
 ### 4. Set up Supabase Storage
-- Go to Storage → New bucket → name it `incident-photos` → set to **Private** (recommended)
+- Go to Storage → New bucket → name it `incident-photos` → set to **Public** (current app uses `getPublicUrl()`)
 
 ### 5. Create admin account
 - Go to Supabase → Authentication → Users → Invite user
@@ -171,13 +171,13 @@ Use the policy set in `supabase/policies/` for production-style access control:
 - Alerts: authenticated read; admin-only create/update/cancel; hard delete disabled by default.
 - Incidents: authenticated create; reporter read-own; admin read-all; admin-only escalation/status updates.
 - Check-ins: staff can write only their own linked `staff_id`; admin can read/reset/update all; viewers cannot modify.
-- Storage (`incident-photos`): private bucket, owner-folder upload/read, admin read-all.
+- Storage (`incident-photos`): current app path is `incidents/{userId}/{file}`; public bucket is required while using `getPublicUrl()`.
 
 ### Supabase setup checklist (security)
 
 - Ensure `profiles` exists and `profiles.id = auth.users.id`.
 - Ensure `profiles.role` and `profiles.active` are present and populated.
-- Create Storage bucket `incident-photos` as **Private**.
+- Create Storage bucket `incident-photos` as **Public** for current app behavior (`getPublicUrl()`).
 - Apply each SQL file in order via Supabase SQL Editor.
 - Test with admin/staff/viewer accounts before release.
 
@@ -187,4 +187,4 @@ SQL migrations in `supabase/policies/` are authored in this repo but are **not a
 
 ### Launch-readiness warning
 
-This app should be treated as **not public-launch-ready** until these policies are applied and verified in the target Supabase project.
+This app should be treated as **not public-launch-ready** until these policies are applied and verified in the target Supabase project; move to signed URLs before switching `incident-photos` to private.

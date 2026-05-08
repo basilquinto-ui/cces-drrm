@@ -1,10 +1,10 @@
 -- 005_storage.sql
 -- Storage RLS for bucket: incident-photos
--- Recommendation: keep this bucket private and serve files via signed URLs.
+-- CURRENT app upload path: incidents/{userId}/{timestamp}.jpg
+-- CURRENT app URL strategy: getPublicUrl() => requires a public bucket today.
+-- Future hardening: migrate to signed URLs then switch bucket to private.
 
--- NOTE: In Supabase dashboard, set bucket "incident-photos" to PRIVATE.
-
--- Upload only to own folder: <auth.uid()>/<filename>
+-- Upload only to own folder using current path convention.
 drop policy if exists incident_photos_insert_own_folder on storage.objects;
 create policy incident_photos_insert_own_folder
 on storage.objects
@@ -12,10 +12,11 @@ for insert
 to authenticated
 with check (
   bucket_id = 'incident-photos'
-  and (storage.foldername(name))[1] = auth.uid()::text
+  and (storage.foldername(name))[1] = 'incidents'
+  and (storage.foldername(name))[2] = auth.uid()::text
 );
 
--- Reporter can read only objects inside own folder.
+-- Reporter can read only objects in own subfolder.
 drop policy if exists incident_photos_select_own_folder on storage.objects;
 create policy incident_photos_select_own_folder
 on storage.objects
@@ -23,7 +24,8 @@ for select
 to authenticated
 using (
   bucket_id = 'incident-photos'
-  and (storage.foldername(name))[1] = auth.uid()::text
+  and (storage.foldername(name))[1] = 'incidents'
+  and (storage.foldername(name))[2] = auth.uid()::text
 );
 
 -- Admins can read all incident photos.
@@ -47,14 +49,20 @@ using (
   bucket_id = 'incident-photos'
   and (
     public.is_admin()
-    or (storage.foldername(name))[1] = auth.uid()::text
+    or (
+      (storage.foldername(name))[1] = 'incidents'
+      and (storage.foldername(name))[2] = auth.uid()::text
+    )
   )
 )
 with check (
   bucket_id = 'incident-photos'
   and (
     public.is_admin()
-    or (storage.foldername(name))[1] = auth.uid()::text
+    or (
+      (storage.foldername(name))[1] = 'incidents'
+      and (storage.foldername(name))[2] = auth.uid()::text
+    )
   )
 );
 
@@ -67,6 +75,9 @@ using (
   bucket_id = 'incident-photos'
   and (
     public.is_admin()
-    or (storage.foldername(name))[1] = auth.uid()::text
+    or (
+      (storage.foldername(name))[1] = 'incidents'
+      and (storage.foldername(name))[2] = auth.uid()::text
+    )
   )
 );

@@ -1,5 +1,7 @@
 -- 001_profiles.sql
 -- Profiles RLS + helper functions for role-aware access control.
+-- IMPORTANT: helper functions are SECURITY DEFINER to avoid RLS recursion.
+-- Ensure function owner is a trusted role (typically postgres/service_role).
 
 alter table if exists public.profiles enable row level security;
 
@@ -8,6 +10,8 @@ create or replace function public.active_role()
 returns text
 language sql
 stable
+security definer
+set search_path = public
 as $$
   select p.role
   from public.profiles p
@@ -21,17 +25,23 @@ create or replace function public.is_admin()
 returns boolean
 language sql
 stable
+security definer
+set search_path = public
 as $$
   select coalesce(public.active_role() = 'admin', false);
 $$;
 
--- Helper: current profile's linked staff_id.
-create or replace function public.current_staff_id()
-returns uuid
+-- Helper: current profile's linked staff_id as text to avoid type lock.
+-- This is schema-dependent: `profiles.staff_id` and `checkins.staff_id`
+-- must be comparable (cast or same type).
+create or replace function public.current_staff_id_text()
+returns text
 language sql
 stable
+security definer
+set search_path = public
 as $$
-  select p.staff_id
+  select p.staff_id::text
   from public.profiles p
   where p.id = auth.uid()
     and coalesce(p.active, true) = true
@@ -40,10 +50,10 @@ $$;
 
 revoke all on function public.active_role() from public;
 revoke all on function public.is_admin() from public;
-revoke all on function public.current_staff_id() from public;
+revoke all on function public.current_staff_id_text() from public;
 grant execute on function public.active_role() to authenticated;
 grant execute on function public.is_admin() to authenticated;
-grant execute on function public.current_staff_id() to authenticated;
+grant execute on function public.current_staff_id_text() to authenticated;
 
 drop policy if exists profiles_select_self_or_admin on public.profiles;
 create policy profiles_select_self_or_admin
@@ -66,7 +76,6 @@ with check (
   and not (id = auth.uid() and role <> 'admin')
 );
 
--- Optional: allow users to update only non-privileged self fields.
 drop policy if exists profiles_update_self_non_privileged on public.profiles;
 create policy profiles_update_self_non_privileged
 on public.profiles
