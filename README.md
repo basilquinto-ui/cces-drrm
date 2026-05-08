@@ -115,3 +115,29 @@ Or connect your GitHub repo to Vercel for automatic deploys on every push.
 - **Address:** Castañeda St., Camp Crame, Brgy. Bagong Lipunan ng Crame, QC
 - **Contact:** (02) 7754-2648
 - **District:** QC District XVII · Est. 1952
+
+---
+
+## 📱 Expo Mobile App (new `/mobile`)
+
+A new Expo React Native app scaffold now lives in `/mobile` while the existing Vite web app remains untouched.
+
+### Run mobile app
+```bash
+cd mobile
+npm install
+cp .env.example .env
+npm run start
+```
+
+### Mobile environment variables
+Only set public Supabase values:
+- `EXPO_PUBLIC_SUPABASE_URL`
+- `EXPO_PUBLIC_SUPABASE_ANON_KEY`
+
+Do **not** place Gemini/weather secrets in mobile env. Use Supabase Edge Functions to proxy AI/weather calls.
+
+### Supabase policy reminders before public launch
+- Add `profiles.role` and assign roles (`admin`, `staff`, `viewer`).
+- Enforce RLS for all tables and storage buckets.
+- Restrict admin mutations to role `admin` only.
