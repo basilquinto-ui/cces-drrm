@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { useAuth } from '../hooks/useAuth'
 import { useToast } from '../components/Toast'
 import logo from '../assets/logo.png'
 
-export default function More({ onStatusChange, onSignalChange }) {
-  const { user, signIn, signOut, isAdmin } = useAuth()
+export default function More({ user, role, isAdmin, signIn, signOut, onStatusChange, onSignalChange }) {
   const toast = useToast()
   const [view, setView] = useState('main')
   const [resources, setResources] = useState([])
@@ -219,7 +217,7 @@ export default function More({ onStatusChange, onSignalChange }) {
         <>
           <div className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div><div style={{ fontSize: 15, fontWeight: 900, color: 'var(--navy)' }}>Welcome, Coordinator!</div><div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{user?.email}</div></div>
+              <div><div style={{ fontSize: 15, fontWeight: 900, color: 'var(--navy)' }}>Welcome, Coordinator!</div><div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{user?.email} · {role}</div></div>
               <button className="btn btn-outline btn-sm" onClick={() => { signOut(); toast('Logged out.') }}>Logout</button>
             </div>
           </div>

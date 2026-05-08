@@ -115,3 +115,40 @@ Or connect your GitHub repo to Vercel for automatic deploys on every push.
 - **Address:** Castañeda St., Camp Crame, Brgy. Bagong Lipunan ng Crame, QC
 - **Contact:** (02) 7754-2648
 - **District:** QC District XVII · Est. 1952
+
+---
+
+## 👤 Required `profiles` table
+
+The app expects every authenticated account to have an optional row in `profiles` with this schema:
+
+- `id uuid references auth.users(id)`
+- `full_name text`
+- `role text check (role in ('admin','staff','viewer'))`
+- `staff_id text null`
+- `active boolean default true`
+
+Example SQL:
+
+```sql
+create table if not exists public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  full_name text,
+  role text not null default 'viewer' check (role in ('admin','staff','viewer')),
+  staff_id text null,
+  active boolean not null default true
+);
+```
+
+If a profile row does not exist, the UI falls back to `viewer` role.
+
+## 🔒 RLS is required (UI checks are not enough)
+
+Client-side role checks only control what users can see/click. You must enforce the same rules in Supabase Row Level Security policies:
+
+- Admin-only alert create/update
+- Admin-only incident verification/status update
+- Staff own check-in
+- Authenticated incident submit
+
+Without RLS, non-admin users can still call Supabase APIs directly.

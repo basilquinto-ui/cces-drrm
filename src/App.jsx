@@ -13,7 +13,7 @@ import { fetchWeather } from './lib/weather'
 import { useAuth } from './hooks/useAuth'
 
 export default function App() {
-  const { user, loading: authLoading, signIn, isAdmin } = useAuth()
+  const { user, role, loading: authLoading, signIn, signOut, isAdmin } = useAuth()
   const [splash, setSplash] = useState(true)
   const [tab, setTab] = useState('home')
   const [weather, setWeather] = useState({ type: 'sunny', loading: true })
@@ -63,7 +63,7 @@ export default function App() {
     alerts: <Alerts isAdmin={isAdmin} onStatusChange={setStatus} />,
     incidents: <Incidents isAdmin={isAdmin} />,
     checkin: <CheckIn isAdmin={isAdmin} />,
-    more: <More onStatusChange={setStatus} onSignalChange={setSignal} />,
+    more: <More user={user} role={role} isAdmin={isAdmin} signIn={signIn} signOut={signOut} onStatusChange={setStatus} onSignalChange={setSignal} />,
   }
 
   return (
