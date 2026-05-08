@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Bell, ClipboardList, ShieldCheck, UserCheck, type LucideIcon } from 'lucide-react-native';
-import { AppCard, BrandMark, DailyHazardMap, DashboardQuickActions, EmptyState, ErrorState, LoadingState, Screen, SectionHeader, StatusBadge, WeatherRiskCard } from '@/components';
+import { AppCard, BrandMark, DailyHazardMap, DashboardQuickActions, EmptyState, ErrorState, LoadingState, RecentIncidentsPreview, Screen, SectionHeader, StatusBadge, WeatherRiskCard } from '@/components';
 import { brand } from '@/constants/brand';
 import { theme } from '@/constants/theme';
 import { getDashboardMetrics, type DashboardMetrics } from '@/services/dashboard';
@@ -62,8 +62,7 @@ export default function DashboardScreen() {
       <DashboardQuickActions />
       <DailyHazardMap />
 
-      <SectionHeader title="Recent Incidents" subtitle="Most recent reports" />
-      <EmptyState message="No incidents reported yet." />
+      <RecentIncidentsPreview />
     </Screen>
   );
 }
