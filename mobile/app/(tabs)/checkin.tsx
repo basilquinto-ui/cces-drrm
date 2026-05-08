@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Text } from 'react-native';
-import { AppButton, AppCard, ErrorState, Screen, SectionHeader } from '@/components';
+import { StyleSheet, Text } from 'react-native';
+import { AppButton, AppCard, ErrorState, Screen, SectionHeader, StatusBadge } from '@/components';
 import { useSession } from '@/hooks/useSession';
 import { upsertCheckin } from '@/services/checkins';
 import { today } from '@/utils/dates';
 import { checkinStatuses } from '@/constants/checkinStatuses';
+import { theme } from '@/constants/theme';
 
 export default function CheckinScreen() {
   const { profile } = useSession();
@@ -20,5 +21,6 @@ export default function CheckinScreen() {
     setMessage('Check-in submitted.');
   };
 
-  return <Screen><SectionHeader title="Staff Check-In" />{message.includes('not linked') ? <ErrorState message={message} /> : <Text>{message}</Text>}{checkinStatuses.map((item) => <AppCard key={item}><AppButton title={item === status ? `${item} selected` : item} onPress={() => setStatus(item)} /></AppCard>)}<AppButton title="Submit Check-In" onPress={submit} /></Screen>;
+  return <Screen><SectionHeader title="Staff Check-In" subtitle="Log your daily status" />{message.includes('not linked') ? <ErrorState message={message} /> : null}{message === 'Check-in submitted.' ? <StatusBadge label="submitted" tone="success" /> : null}{checkinStatuses.map((item) => <AppCard key={item} variant={item === status ? 'highlight' : 'default'}><Text style={styles.label}>{item}</Text><AppButton title={item === status ? 'Selected' : 'Set status'} onPress={() => setStatus(item)} /></AppCard>)}<AppButton title="Submit Check-In" onPress={submit} /></Screen>;
 }
+const styles = StyleSheet.create({ label: { textTransform: 'capitalize', fontWeight: '700', color: theme.colors.text, marginBottom: 8 } });

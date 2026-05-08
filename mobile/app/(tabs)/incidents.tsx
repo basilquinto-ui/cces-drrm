@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { AppButton, AppCard, AppTextInput, ErrorState, Screen, SectionHeader } from '@/components';
+import { AppButton, AppCard, AppTextInput, EmptyState, ErrorState, Screen, SectionHeader, StatusBadge } from '@/components';
 import { createIncident, uploadIncidentPhoto } from '@/services/incidents';
 import { useSession } from '@/hooks/useSession';
 import { hazards } from '@/constants/hazards';
@@ -49,5 +49,5 @@ export default function IncidentsScreen() {
     setNotice('Incident report submitted.');
   };
 
-  return <Screen><SectionHeader title="Incidents" />{error ? <ErrorState message={error} /> : null}{notice ? <Text>{notice}</Text> : null}<AppTextInput value={location} onChangeText={setLocation} placeholder="Location" /><SectionHeader title="Hazard Type" />{hazards.map((item) => <AppCard key={item}><AppButton title={item === hazardType ? `${item} selected` : item} onPress={() => setHazardType(item)} /></AppCard>)}<SectionHeader title="Severity" />{severities.map((item) => <AppCard key={item}><AppButton title={item === severity ? `${item} selected` : item} onPress={() => setSeverity(item)} /></AppCard>)}<AppTextInput value={description} onChangeText={setDescription} placeholder="Description" multiline /><AppButton title="Attach Optional Photo" onPress={pickPhoto} /><AppButton title={submitting ? 'Submitting...' : 'Submit Incident'} onPress={submitting ? () => undefined : submit} /></Screen>;
+  return <Screen><SectionHeader title="Incidents" subtitle="Submit hazard reports from the field" />{error ? <ErrorState message={error} /> : null}{notice ? <StatusBadge label={notice} tone="success" /> : <EmptyState message="No new report submitted in this session." />}<AppTextInput value={location} onChangeText={setLocation} placeholder="Location" /><SectionHeader title="Hazard Type" />{hazards.map((item) => <AppCard key={item}><AppButton title={item === hazardType ? `${item} selected` : item} onPress={() => setHazardType(item)} /></AppCard>)}<SectionHeader title="Severity" />{severities.map((item) => <AppCard key={item}><AppButton title={item === severity ? `${item} selected` : item} onPress={() => setSeverity(item)} /></AppCard>)}<AppTextInput value={description} onChangeText={setDescription} placeholder="Description" multiline /><AppButton title="Attach Optional Photo" onPress={pickPhoto} /><AppButton title={submitting ? 'Submitting...' : 'Submit Incident'} onPress={submitting ? () => undefined : submit} /></Screen>;
 }
