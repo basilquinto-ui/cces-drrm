@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { AppButton, AppCard, RoleGate, Screen, SectionHeader, StatusBadge } from '@/components';
+import { checkinStatusMeta, checkinStatuses, type CheckinStatus } from '@/constants/checkinStatuses';
+import { theme } from '@/constants/theme';
 import { useSession } from '@/hooks/useSession';
 import { upsertCheckin } from '@/services/checkins';
 import { today } from '@/utils/dates';
-import { checkinStatuses } from '@/constants/checkinStatuses';
-import { theme } from '@/constants/theme';
 
 export default function CheckinScreen() {
   const { profile } = useSession();
-  const [status, setStatus] = useState<(typeof checkinStatuses)[number]>('safe');
+  const [status, setStatus] = useState<CheckinStatus>('safe');
   const [message, setMessage] = useState('');
 
   const isInactive = profile?.active === false;
@@ -28,7 +28,7 @@ export default function CheckinScreen() {
   const submit = async () => {
     if (!canSubmit || !profile?.staff_id) return;
     await upsertCheckin(profile.staff_id, status, today());
-    setMessage('Check-in submitted.');
+    setMessage(`Check-in submitted: ${checkinStatusMeta[status].label}`);
   };
 
   return (
@@ -47,13 +47,23 @@ export default function CheckinScreen() {
           </AppCard>
         ) : (
           <>
-            {checkinStatuses.map((item) => (
-              <AppCard key={item} variant={item === status ? 'highlight' : 'default'}>
-                <Text style={styles.label}>{item}</Text>
-                <AppButton title={item === status ? 'Selected' : 'Set status'} onPress={() => setStatus(item)} />
-              </AppCard>
-            ))}
-            <AppButton title="Submit Check-In" onPress={submit} />
+            {checkinStatuses.map((item) => {
+              const statusMeta = checkinStatusMeta[item];
+              const selected = item === status;
+
+              return (
+                <AppCard key={item} variant={selected ? 'highlight' : 'default'}>
+                  <Text style={styles.label}>{statusMeta.label}</Text>
+                  <Text style={styles.description}>{statusMeta.description}</Text>
+                  <StatusBadge label={selected ? 'Selected' : 'Available'} tone={selected ? statusMeta.tone : 'info'} />
+                  <AppButton
+                    title={selected ? 'Selected' : `Set ${statusMeta.label}`}
+                    onPress={() => setStatus(item)}
+                  />
+                </AppCard>
+              );
+            })}
+            {canSubmit ? <AppButton title="Submit Check-In" onPress={submit} /> : null}
           </>
         )}
       </RoleGate>
@@ -62,6 +72,7 @@ export default function CheckinScreen() {
 }
 
 const styles = StyleSheet.create({
-  label: { textTransform: 'capitalize', fontWeight: '700', color: theme.colors.text, marginBottom: 8 },
+  label: { fontWeight: '700', color: theme.colors.text, marginBottom: 6 },
+  description: { color: theme.colors.muted, marginBottom: 10 },
   blocked: { color: theme.colors.muted, fontWeight: '600' },
 });
