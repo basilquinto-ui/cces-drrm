@@ -9,7 +9,8 @@ export default function AlertsScreen() {
   const [alerts, setAlerts] = useState<any[]>([]);
   const [notice, setNotice] = useState('');
   const { role, profile } = useSession();
-  const canView = !!profile?.active;
+  const canView = profile?.active !== false;
+  const isActiveAdmin = profile?.active !== false && role === 'admin';
 
   const load = () => listAlerts().then((v) => setAlerts(v as any[]));
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function AlertsScreen() {
       <SectionHeader title="Alerts" subtitle="Broadcast and monitor advisories" />
       {notice ? <StatusBadge label={notice} tone="success" /> : null}
       {!canView ? (
-        <EmptyState message="Limited access: no active profile is linked to this account." />
+        <EmptyState message="Account inactive" />
       ) : (
         <>
           {alerts.length === 0 ? (
@@ -42,12 +43,14 @@ export default function AlertsScreen() {
             alerts.map((a) => (
               <AppCard key={a.id}>
                 <StatusBadge label={a.active ? 'active' : 'resolved'} tone={a.active ? 'warning' : 'info'} />
-                <Text>Hazard: {a.hazard_type}</Text><Text>Level: {a.level}</Text>
-                <Text>Message: {a.message}</Text><Text>Issued by: {a.issued_by}</Text>
+                <Text>Hazard: {a.hazard_type}</Text>
+                <Text>Level: {a.level}</Text>
+                <Text>Message: {a.message}</Text>
+                <Text>Issued by: {a.issued_by}</Text>
               </AppCard>
             ))
           )}
-          {role === 'admin' ? (
+          {isActiveAdmin ? (
             <RoleGate
               allowedRoles={['admin']}
               profile={profile}
