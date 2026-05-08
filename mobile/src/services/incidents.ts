@@ -7,7 +7,8 @@ export async function uploadIncidentPhoto(userId: string, uri: string): Promise<
     const path = `incidents/${userId}/${Date.now()}.jpg`;
     const { error } = await supabase.storage.from('incident-photos').upload(path, blob, { contentType: 'image/jpeg', upsert: false });
     if (error) return null;
-    return path;
+    const { data } = supabase.storage.from('incident-photos').getPublicUrl(path);
+    return data.publicUrl ?? null;
   } catch {
     return null;
   }

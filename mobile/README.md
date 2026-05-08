@@ -16,3 +16,4 @@ Expo Router mobile foundation for CCES DRRM operations.
 - Requires Supabase RLS configuration.
 - Requires successful local mobile install and typecheck.
 - Requires Expo Go and on-device testing.
+- Incident photo URLs depend on Supabase storage policy allowing public read; otherwise signed URL handling is required.
