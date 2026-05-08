@@ -1,20 +1,55 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
+
+const DEFAULT_ROLE = 'viewer'
 
 export function useAuth() {
   const [user, setUser] = useState(null)
+  const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  const loadProfile = useCallback(async (authUser) => {
+    if (!authUser?.id) {
+      setProfile(null)
+      return null
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, full_name, role, staff_id, active')
+      .eq('id', authUser.id)
+      .maybeSingle()
+
+    if (error) {
+      console.error('Failed to load profile:', error.message)
+      setProfile(null)
+      return null
+    }
+
+    setProfile(data ?? null)
+    return data ?? null
+  }, [])
+
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
+    const initAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      const nextUser = session?.user ?? null
+      setUser(nextUser)
+      await loadProfile(nextUser)
+      setLoading(false)
+    }
+
+    initAuth()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const nextUser = session?.user ?? null
+      setUser(nextUser)
+      await loadProfile(nextUser)
       setLoading(false)
     })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
+
     return () => subscription.unsubscribe()
-  }, [])
+  }, [loadProfile])
 
   const signIn = async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
@@ -25,5 +60,10 @@ export function useAuth() {
     await supabase.auth.signOut()
   }
 
-  return { user, loading, signIn, signOut, isAdmin: !!user }
+  const activeRole = profile?.active === false ? DEFAULT_ROLE : (profile?.role ?? DEFAULT_ROLE)
+  const isAdmin = profile?.active !== false && profile?.role === 'admin'
+
+  const role = activeRole
+
+  return { user, profile, role, loading, signIn, signOut, isAdmin }
 }
