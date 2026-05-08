@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Text } from 'react-native';
-import { AppButton, AppCard, Screen, SectionHeader } from '@/components';
+import { AppButton, AppCard, EmptyState, Screen, SectionHeader, StatusBadge } from '@/components';
 import { listAlerts, createAlert } from '@/services/alerts';
 import { useSession } from '@/hooks/useSession';
 import { alertTemplates } from '@/constants/alertTemplates';
@@ -18,5 +18,5 @@ export default function AlertsScreen() {
     load();
   };
 
-  return <Screen><SectionHeader title="Alerts" />{notice ? <Text>{notice}</Text> : null}{alerts.map((a) => <AppCard key={a.id}><Text>Hazard: {a.hazard_type}</Text><Text>Level: {a.level}</Text><Text>Message: {a.message}</Text><Text>Issued by: {a.issued_by}</Text><Text>Status: {a.active ? 'active' : 'resolved'}</Text><Text>Created: {a.created_at}</Text></AppCard>)}{role === 'admin' ? <><SectionHeader title="Admin Templates" />{alertTemplates.map((t) => <AppButton key={`${t.level}-${t.message}`} title={`${t.level}: ${t.message}`} onPress={() => createFromTemplate({ level: t.level, message: t.message })} />)}</> : null}</Screen>;
+  return <Screen><SectionHeader title="Alerts" subtitle="Broadcast and monitor advisories" />{notice ? <StatusBadge label={notice} tone="success" /> : null}{alerts.length === 0 ? <EmptyState message="No active advisories are currently posted." /> : alerts.map((a) => <AppCard key={a.id}><StatusBadge label={a.active ? 'active' : 'resolved'} tone={a.active ? 'warning' : 'info'} /><Text>Hazard: {a.hazard_type}</Text><Text>Level: {a.level}</Text><Text>Message: {a.message}</Text><Text>Issued by: {a.issued_by}</Text></AppCard>)}{role === 'admin' ? <><SectionHeader title="Admin Templates" subtitle="Quickly issue standardized notices" />{alertTemplates.map((t) => <AppButton key={`${t.level}-${t.message}`} title={`${t.level}: ${t.message}`} onPress={() => createFromTemplate({ level: t.level, message: t.message })} />)}</> : null}</Screen>;
 }
