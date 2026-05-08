@@ -1,8 +1,8 @@
 import { PropsWithChildren } from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { theme } from '@/constants/theme';
 
-type AppCardProps = PropsWithChildren<{ variant?: 'default' | 'highlight' | 'outline'; style?: ViewStyle }>;
+type AppCardProps = PropsWithChildren<{ variant?: 'default' | 'highlight' | 'outline'; style?: StyleProp<ViewStyle> }>;
 
 export function AppCard({ children, variant = 'default', style }: AppCardProps) {
   return <View style={[styles.card, styles[variant], style]}>{children}</View>;

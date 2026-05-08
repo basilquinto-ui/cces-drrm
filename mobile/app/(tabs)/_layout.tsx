@@ -1,10 +1,18 @@
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import {
+  AlertTriangle,
+  Bell,
+  LayoutDashboard,
+  ListChecks,
+  type LucideIcon,
+  UserCheck,
+} from 'lucide-react-native';
 import { theme } from '@/constants/theme';
 
-const tabIcon = (name: keyof typeof Ionicons.glyphMap) => ({ color, size }: { color: string; size: number }) => (
-  <Ionicons name={name} color={color} size={size} />
-);
+const tabIcon =
+  (Icon: LucideIcon) =>
+  ({ color, size }: { color: string; size: number }) =>
+    <Icon color={color} size={size} strokeWidth={2.25} />;
 
 export default function TabLayout() {
   return (
@@ -17,11 +25,11 @@ export default function TabLayout() {
         tabBarLabelStyle: { fontWeight: '600', fontSize: 12 },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Dashboard', tabBarIcon: tabIcon('grid') }} />
-      <Tabs.Screen name="alerts" options={{ title: 'Alerts', tabBarIcon: tabIcon('notifications') }} />
-      <Tabs.Screen name="incidents" options={{ title: 'Incidents', tabBarIcon: tabIcon('warning') }} />
-      <Tabs.Screen name="checkin" options={{ title: 'Check-In', tabBarIcon: tabIcon('shield-checkmark') }} />
-      <Tabs.Screen name="more" options={{ title: 'Operations', tabBarIcon: tabIcon('list') }} />
+      <Tabs.Screen name="index" options={{ title: 'Dashboard', tabBarIcon: tabIcon(LayoutDashboard) }} />
+      <Tabs.Screen name="alerts" options={{ title: 'Alerts', tabBarIcon: tabIcon(Bell) }} />
+      <Tabs.Screen name="incidents" options={{ title: 'Incidents', tabBarIcon: tabIcon(AlertTriangle) }} />
+      <Tabs.Screen name="checkin" options={{ title: 'Check-In', tabBarIcon: tabIcon(UserCheck) }} />
+      <Tabs.Screen name="more" options={{ title: 'Operations', tabBarIcon: tabIcon(ListChecks) }} />
     </Tabs>
   );
 }
