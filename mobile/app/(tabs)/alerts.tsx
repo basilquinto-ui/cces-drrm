@@ -29,7 +29,19 @@ export default function AlertsScreen() {
   }, [canView]);
 
   const createFromTemplate = async (template: { level: string; message: string }) => {
-    await createAlert({ hazard_type: 'general', level: template.level, message: template.message, issued_by: profile?.full_name ?? 'Admin', active: true });
+    setError('');
+    setNotice('');
+    const { error: createError } = await createAlert({
+      hazard_type: 'general',
+      level: template.level,
+      message: template.message,
+      issued_by: profile?.full_name ?? 'Admin',
+      active: true,
+    });
+    if (createError) {
+      setError(createError.message);
+      return;
+    }
     setNotice('Alert created.');
     load();
   };

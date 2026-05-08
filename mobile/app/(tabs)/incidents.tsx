@@ -62,12 +62,12 @@ export default function IncidentsScreen() {
 
           <SectionHeader title="Hazard Type" subtitle="Select one" />
           {hazards.map((item) => (
-            <AppCard key={item}><AppButton title={item === hazardType ? `✓ ${formatLabel(item)}` : formatLabel(item)} onPress={() => setHazardType(item)} /></AppCard>
+            <AppCard key={item}><AppButton title={item === hazardType ? `Selected: ${formatLabel(item)}` : formatLabel(item)} onPress={() => setHazardType(item)} /></AppCard>
           ))}
 
           <SectionHeader title="Severity" subtitle="Select one" />
           {severities.map((item) => (
-            <AppCard key={item}><AppButton title={item === severity ? `✓ ${formatLabel(item)}` : formatLabel(item)} onPress={() => setSeverity(item)} /></AppCard>
+            <AppCard key={item}><AppButton title={item === severity ? `Selected: ${formatLabel(item)}` : formatLabel(item)} onPress={() => setSeverity(item)} /></AppCard>
           ))}
 
           <SectionHeader title="Photo" subtitle="Optional" />
