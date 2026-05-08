@@ -2,16 +2,16 @@ import { CAT_ICONS, CAT_ORDER } from './moreData'
 import ResourceEditModal from './ResourceEditModal'
 
 function getResourceIcon(name) {
-  if (name.includes('First Aid')) return '🧰'
-  if (name.includes('Extinguish')) return '🧯'
-  if (name.includes('Flash')) return '🔦'
-  if (name.includes('Water')) return '💧'
-  if (name.includes('Food')) return '🍱'
-  if (name.includes('Mega')) return '📢'
-  if (name.includes('Rope')) return '🪢'
-  if (name.includes('Bandage')) return '🩹'
-  if (name.includes('Sand')) return '🪣'
-  return '📦'
+  if (name.includes('First Aid')) return ''
+  if (name.includes('Extinguish')) return ''
+  if (name.includes('Flash')) return ''
+  if (name.includes('Water')) return ''
+  if (name.includes('Food')) return ''
+  if (name.includes('Mega')) return ''
+  if (name.includes('Rope')) return ''
+  if (name.includes('Bandage')) return ''
+  if (name.includes('Sand')) return ''
+  return ''
 }
 
 export default function ResourcesView({ resources, isAdmin, editRes, onEdit, onCloseEdit, onSaveEdit }) {
@@ -23,7 +23,7 @@ export default function ResourcesView({ resources, isAdmin, editRes, onEdit, onC
 
   return (
     <>
-      <div className="section-title" style={{ marginBottom: 14 }}>📦 Resource Inventory</div>
+      <div className="section-title" style={{ marginBottom: 14 }}> Resource Inventory</div>
       {Object.entries(grouped).map(([category, items]) => (
         <div key={category} className="card">
           <div className="card-title">
@@ -52,7 +52,7 @@ export default function ResourcesView({ resources, isAdmin, editRes, onEdit, onC
                   style={{ background: 'var(--blue-light)', color: '#3b82f6', marginLeft: 8 }}
                   onClick={() => onEdit(resource)}
                 >
-                  ✏️
+                  
                 </button>
               )}
             </div>

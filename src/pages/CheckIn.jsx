@@ -3,9 +3,9 @@ import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 
 const statusConfig = {
-  safe: { icon: '✅', label: 'Safe', cls: 'safe', btnColor: 'var(--green)' },
-  medical: { icon: '🏥', label: 'Needs Medical', cls: 'medical', btnColor: 'var(--red)' },
-  evacuation: { icon: '📍', label: 'At Evacuation', cls: 'evacuation', btnColor: '#3b82f6' },
+  safe: { icon: '', label: 'Safe', cls: 'safe', btnColor: 'var(--green)' },
+  medical: { icon: '', label: 'Needs Medical', cls: 'medical', btnColor: 'var(--red)' },
+  evacuation: { icon: '', label: 'At Evacuation', cls: 'evacuation', btnColor: '#3b82f6' },
 }
 
 export default function CheckIn({ isAdmin }) {
@@ -46,7 +46,7 @@ export default function CheckIn({ isAdmin }) {
   async function resetCheckins() {
     await supabase.from('checkins').delete().eq('date', today)
     setCheckins({})
-    toast('🔄 All check-ins reset.', 'success')
+    toast(' All check-ins reset.', 'success')
   }
 
   const checked = staff.filter(s => checkins[s.id])
@@ -67,7 +67,7 @@ export default function CheckIn({ isAdmin }) {
 
       {/* Counts */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-        {[['var(--green-light)', 'var(--green)', safeCnt, '✅ Safe'], ['var(--red-light)', 'var(--red)', medCnt, '🏥 Medical'], ['var(--blue-light)', '#3b82f6', evacCnt, '📍 Evacuation']].map(([bg, color, cnt, label]) => (
+        {[['var(--green-light)', 'var(--green)', safeCnt, ' Safe'], ['var(--red-light)', 'var(--red)', medCnt, ' Medical'], ['var(--blue-light)', '#3b82f6', evacCnt, ' Evacuation']].map(([bg, color, cnt, label]) => (
           <div key={label} style={{ flex: 1, background: bg, borderRadius: 10, padding: 12, textAlign: 'center' }}>
             <div style={{ fontSize: 22, fontWeight: 900, color, fontFamily: 'Poppins,sans-serif' }}>{cnt}</div>
             <div style={{ fontSize: 10, fontWeight: 700, color }}>{label}</div>
@@ -77,7 +77,7 @@ export default function CheckIn({ isAdmin }) {
 
       <div className="section-header">
         <span className="section-title">Tap your name to check in</span>
-        {isAdmin && <button className="btn btn-outline btn-sm" onClick={resetCheckins}>🔄 Reset</button>}
+        {isAdmin && <button className="btn btn-outline btn-sm" onClick={resetCheckins}> Reset</button>}
       </div>
 
       {loading ? (
@@ -94,7 +94,7 @@ export default function CheckIn({ isAdmin }) {
             const firstName = nameParts[0]
             return (
               <div key={s.id} className={`checkin-item ${cfg?.cls || ''}`} onClick={() => setSelected(s)}>
-                <div className="checkin-status">{cfg?.icon || '👤'}</div>
+                <div className="checkin-status">{cfg?.icon || ''}</div>
                 <h4>{lastName}, {firstName}</h4>
                 <p style={{ fontSize: 10, color: 'var(--text-muted)' }}>{s.role}</p>
                 <p style={{ fontSize: 10, fontWeight: 700, marginTop: 4, color: status ? 'inherit' : 'var(--text-muted)' }}>{cfg?.label || 'Not checked in'}</p>

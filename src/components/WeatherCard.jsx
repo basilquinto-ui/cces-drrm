@@ -32,7 +32,7 @@ export default function WeatherCard({ weather, signal, onSignalChange }) {
   }, [weather.type])
 
   const signalColors = ['rgba(22,163,74,0.8)', 'rgba(234,179,8,0.9)', 'rgba(249,115,22,0.9)', 'rgba(220,38,38,0.95)']
-  const signalLabels = ['🌀 No Typhoon Signal', '🌀 Signal #1', '🌀 Signal #2', '🌀 Signal #3+']
+  const signalLabels = [' No Typhoon Signal', ' Signal #1', ' Signal #2', ' Signal #3+']
 
   return (
     <div style={{ borderRadius: 'var(--radius)', overflow: 'hidden', position: 'relative', height: 160, boxShadow: 'var(--shadow-lg)', marginBottom: 14 }}>
@@ -91,7 +91,7 @@ export default function WeatherCard({ weather, signal, onSignalChange }) {
           </div>
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end' }}>
-          {[`💧 ${weather.humidity ?? '--'}% humidity`, `💨 ${weather.windKph ?? '--'} km/h winds`, '📍 Quezon City'].map(t => (
+          {[` ${weather.humidity ?? '--'}% humidity`, ` ${weather.windKph ?? '--'} km/h winds`, ' Quezon City'].map(t => (
             <div key={t} style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', borderRadius: 20, padding: '4px 10px', fontSize: 11, color: 'white', fontWeight: 700 }}>{t}</div>
           ))}
         </div>
@@ -105,7 +105,7 @@ export default function WeatherCard({ weather, signal, onSignalChange }) {
       {/* Earthquake badge */}
       <div style={{ position: 'absolute', bottom: 12, right: 16, zIndex: 10, background: 'rgba(27,58,107,0.75)', backdropFilter: 'blur(8px)', padding: '4px 10px', borderRadius: 20, fontSize: 11, fontWeight: 800, color: 'white', display: 'flex', alignItems: 'center', gap: 4 }}>
         <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#dc2626', animation: 'quakePulse 2s infinite' }} />
-        🌍 High Seismic Risk
+         High Seismic Risk
       </div>
     </div>
   )

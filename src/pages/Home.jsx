@@ -3,10 +3,10 @@ import { supabase } from '../lib/supabase'
 import WeatherCard from '../components/WeatherCard'
 
 const riskClasses = { high: 'risk-high', moderate: 'risk-moderate', low: 'risk-low', safe: 'risk-safe' }
-const riskLabels = { high: '🔴 High Risk', moderate: '🟡 Moderate', low: '🟢 Low Risk', safe: '🔵 Assembly' }
+const riskLabels = { high: ' High Risk', moderate: ' Moderate', low: ' Low Risk', safe: ' Assembly' }
 const riskColors = { high: '#dc2626', moderate: '#ca8a04', low: '#16a34a', safe: '#3b82f6' }
 const sevBg = { minor: '#dcfce7', moderate: '#fef9c3', severe: '#fee2e2' }
-const hazardIcon = { earthquake: '🌍', typhoon: '🌀', flood: '🌊', fire: '🔥', landslide: '⛰️', general: '⚠️' }
+const hazardIcon = { earthquake: '', typhoon: '', flood: '', fire: '', landslide: '', general: '' }
 
 export default function Home({ weather, signal, onSignalChange, onTabChange, status, onStatusChange }) {
   const [areas, setAreas] = useState([])
@@ -17,7 +17,7 @@ export default function Home({ weather, signal, onSignalChange, onTabChange, sta
   const [editArea, setEditArea] = useState(null)
   const [editRisk, setEditRisk] = useState('moderate')
   const [addForm, setAddForm] = useState(false)
-  const [newArea, setNewArea] = useState({ name: '', icon: '📍', risk_level: 'moderate', description: '' })
+  const [newArea, setNewArea] = useState({ name: '', icon: '', risk_level: 'moderate', description: '' })
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -70,17 +70,17 @@ export default function Home({ weather, signal, onSignalChange, onTabChange, sta
       assessed_date: new Date().toISOString().split('T')[0]
     })
     setSaving(false)
-    setNewArea({ name: '', icon: '📍', risk_level: 'moderate', description: '' })
+    setNewArea({ name: '', icon: '', risk_level: 'moderate', description: '' })
     setAddForm(false)
     loadAll()
   }
 
   const today = new Date().toLocaleDateString('en-PH', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
   const statusCfg = {
-    normal: { cls: 'normal', icon: '🟢', h: 'ALL CLEAR', p: 'No active alerts · ' + today },
-    watch: { cls: 'watch', icon: '🟡', h: 'WATCH', p: 'Stay alert and monitor updates · ' + today },
-    alert: { cls: 'alert', icon: '🔴', h: 'ALERT!', p: 'Emergency — follow DRRM protocols · ' + today },
-  }[status] || { cls: 'normal', icon: '🟢', h: 'ALL CLEAR', p: today }
+    normal: { cls: 'normal', icon: '', h: 'ALL CLEAR', p: 'No active alerts · ' + today },
+    watch: { cls: 'watch', icon: '', h: 'WATCH', p: 'Stay alert and monitor updates · ' + today },
+    alert: { cls: 'alert', icon: '', h: 'ALERT!', p: 'Emergency — follow DRRM protocols · ' + today },
+  }[status] || { cls: 'normal', icon: '', h: 'ALL CLEAR', p: today }
 
   return (
     <div className="fade-in">
@@ -102,15 +102,15 @@ export default function Home({ weather, signal, onSignalChange, onTabChange, sta
 
       {/* Quick Actions */}
       <div className="quick-actions">
-        <button className="quick-btn danger" onClick={() => onTabChange('alerts')}><span className="qb-icon">🚨</span><span className="qb-label">Send Alert</span></button>
-        <button className="quick-btn" onClick={() => onTabChange('incidents')}><span className="qb-icon">📋</span><span className="qb-label">Report Incident</span></button>
-        <button className="quick-btn" onClick={() => onTabChange('checkin')}><span className="qb-icon">✅</span><span className="qb-label">Check In</span></button>
+        <button className="quick-btn danger" onClick={() => onTabChange('alerts')}><span className="qb-icon"></span><span className="qb-label">Send Alert</span></button>
+        <button className="quick-btn" onClick={() => onTabChange('incidents')}><span className="qb-icon"></span><span className="qb-label">Report Incident</span></button>
+        <button className="quick-btn" onClick={() => onTabChange('checkin')}><span className="qb-icon"></span><span className="qb-label">Check In</span></button>
       </div>
 
       {/* Hazard Map */}
       <div className="hazard-map-card">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <div style={{ fontSize: 15, fontWeight: 900, color: 'var(--navy)' }}>🗺️ Daily Hazard Map</div>
+          <div style={{ fontSize: 15, fontWeight: 900, color: 'var(--navy)' }}> Daily Hazard Map</div>
           <button className="see-all" onClick={() => setShowManage(true)}>+ Manage Areas</button>
         </div>
         <div className="campus-grid">
@@ -136,10 +136,10 @@ export default function Home({ weather, signal, onSignalChange, onTabChange, sta
           <button className="see-all" onClick={() => onTabChange('incidents')}>View all →</button>
         </div>
         {incidents.length === 0 ? (
-          <div className="empty-state"><div className="empty-icon">✅</div><p>No incidents reported yet</p></div>
+          <div className="empty-state"><div className="empty-icon"></div><p>No incidents reported yet</p></div>
         ) : incidents.map(inc => (
           <div key={inc.id} className="feed-item">
-            <div className="feed-icon" style={{ background: sevBg[inc.severity] || '#f1f5f9' }}>{hazardIcon[inc.hazard_type] || '⚠️'}</div>
+            <div className="feed-icon" style={{ background: sevBg[inc.severity] || '#f1f5f9' }}>{hazardIcon[inc.hazard_type] || ''}</div>
             <div className="feed-info">
               <h4>{inc.description.slice(0, 50)}{inc.description.length > 50 ? '...' : ''}</h4>
               <p>{inc.location} · {new Date(inc.created_at).toLocaleDateString('en-PH')}</p>
@@ -159,16 +159,16 @@ export default function Home({ weather, signal, onSignalChange, onTabChange, sta
             <div className="modal-handle" />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
               <h2 style={{ marginBottom: 0, fontSize: 17 }}>{selectedArea.icon} {selectedArea.name}</h2>
-              <button className="btn btn-outline btn-sm" onClick={() => { setEditArea(selectedArea); setEditRisk(selectedArea.risk_level) }}>✏️ Edit</button>
+              <button className="btn btn-outline btn-sm" onClick={() => { setEditArea(selectedArea); setEditRisk(selectedArea.risk_level) }}> Edit</button>
             </div>
             <div style={{ color: riskColors[selectedArea.risk_level], fontWeight: 700, fontSize: 12, marginBottom: 10 }}>{riskLabels[selectedArea.risk_level]} — Score: {selectedArea.risk_score}/100</div>
             <div className="progress-bar"><div className="progress-fill" style={{ width: selectedArea.risk_score + '%', background: `linear-gradient(90deg,${riskColors[selectedArea.risk_level]},${riskColors[selectedArea.risk_level]}88)` }} /></div>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 12, lineHeight: 1.6 }}>{selectedArea.description}</p>
             {(selectedArea.observations || []).map((o, i) => (
-              <div key={i} style={{ display: 'flex', gap: 8, padding: '8px 10px', background: 'var(--bg)', borderRadius: 10, marginTop: 6, fontSize: 12 }}>📌 {o}</div>
+              <div key={i} style={{ display: 'flex', gap: 8, padding: '8px 10px', background: 'var(--bg)', borderRadius: 10, marginTop: 6, fontSize: 12 }}> {o}</div>
             ))}
             <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 12, paddingTop: 10, borderTop: '1px solid var(--border)' }}>
-              👤 {selectedArea.assessed_by} · 📅 {selectedArea.assessed_date}
+               {selectedArea.assessed_by} ·  {selectedArea.assessed_date}
             </div>
             <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => setSelectedArea(null)}>Close</button>
           </div>
@@ -180,7 +180,7 @@ export default function Home({ weather, signal, onSignalChange, onTabChange, sta
         <div className="modal-overlay" onClick={() => setEditArea(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal-handle" />
-            <h2>✏️ Edit: {editArea.name}</h2>
+            <h2> Edit: {editArea.name}</h2>
             <div className="form-group">
               <label className="form-label">Risk Level</label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
@@ -207,7 +207,7 @@ export default function Home({ weather, signal, onSignalChange, onTabChange, sta
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => setEditArea(null)}>Cancel</button>
-              <button className="btn btn-primary" style={{ flex: 2 }} onClick={saveAreaEdit} disabled={saving}>{saving ? 'Saving...' : '💾 Save Assessment'}</button>
+              <button className="btn btn-primary" style={{ flex: 2 }} onClick={saveAreaEdit} disabled={saving}>{saving ? 'Saving...' : ' Save Assessment'}</button>
             </div>
           </div>
         </div>
@@ -219,7 +219,7 @@ export default function Home({ weather, signal, onSignalChange, onTabChange, sta
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal-handle" />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h2 style={{ marginBottom: 0 }}>🗺️ Manage Areas</h2>
+              <h2 style={{ marginBottom: 0 }}> Manage Areas</h2>
               <button className="btn btn-primary btn-sm" onClick={() => setAddForm(!addForm)}>+ Add Area</button>
             </div>
             {areas.map(a => (
@@ -232,25 +232,25 @@ export default function Home({ weather, signal, onSignalChange, onTabChange, sta
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <button className="btn-icon" style={{ background: 'var(--blue-light)', color: '#3b82f6' }} onClick={() => { setShowManage(false); setEditArea(a); setEditRisk(a.risk_level) }}>✏️</button>
-                  <button className="btn-icon" style={{ background: 'var(--red-light)', color: 'var(--red)' }} onClick={() => deleteArea(a.id)} disabled={areas.length <= 1}>🗑️</button>
+                  <button className="btn-icon" style={{ background: 'var(--blue-light)', color: '#3b82f6' }} onClick={() => { setShowManage(false); setEditArea(a); setEditRisk(a.risk_level) }}></button>
+                  <button className="btn-icon" style={{ background: 'var(--red-light)', color: 'var(--red)' }} onClick={() => deleteArea(a.id)} disabled={areas.length <= 1}></button>
                 </div>
               </div>
             ))}
             {addForm && (
               <div style={{ marginTop: 14, paddingTop: 14, borderTop: '2px solid var(--border)' }}>
-                <div style={{ fontWeight: 800, color: 'var(--navy)', marginBottom: 12 }}>➕ Add New Area</div>
+                <div style={{ fontWeight: 800, color: 'var(--navy)', marginBottom: 12 }}> Add New Area</div>
                 <div className="form-group"><label className="form-label">Area Name</label><input className="form-control" value={newArea.name} onChange={e => setNewArea(n => ({ ...n, name: e.target.value }))} placeholder="e.g. Computer Lab" /></div>
                 <div className="form-group"><label className="form-label">Icon (emoji)</label><input className="form-control" value={newArea.icon} onChange={e => setNewArea(n => ({ ...n, icon: e.target.value }))} maxLength={4} /></div>
                 <div className="form-group"><label className="form-label">Risk Level</label>
                   <select className="form-control" value={newArea.risk_level} onChange={e => setNewArea(n => ({ ...n, risk_level: e.target.value }))}>
-                    <option value="high">🔴 High Risk</option><option value="moderate">🟡 Moderate</option><option value="low">🟢 Low Risk</option><option value="safe">🔵 Assembly Area</option>
+                    <option value="high"> High Risk</option><option value="moderate"> Moderate</option><option value="low"> Low Risk</option><option value="safe"> Assembly Area</option>
                   </select>
                 </div>
                 <div className="form-group"><label className="form-label">Description</label><textarea className="form-control" value={newArea.description} onChange={e => setNewArea(n => ({ ...n, description: e.target.value }))} rows={2} /></div>
                 <div style={{ display: 'flex', gap: 10 }}>
                   <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => setAddForm(false)}>Cancel</button>
-                  <button className="btn btn-primary" style={{ flex: 2 }} onClick={addAreaSubmit} disabled={saving}>{saving ? 'Adding...' : '✅ Add Area'}</button>
+                  <button className="btn btn-primary" style={{ flex: 2 }} onClick={addAreaSubmit} disabled={saving}>{saving ? 'Adding...' : ' Add Area'}</button>
                 </div>
               </div>
             )}

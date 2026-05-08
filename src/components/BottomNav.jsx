@@ -1,10 +1,10 @@
 export default function BottomNav({ active, onChange }) {
   const tabs = [
-    { id: 'home', icon: '🏠', label: 'Home' },
-    { id: 'alerts', icon: '🚨', label: 'Alerts' },
-    { id: 'incidents', icon: '📋', label: 'Incidents' },
-    { id: 'checkin', icon: '✅', label: 'Check-in' },
-    { id: 'more', icon: '⚙️', label: 'More' },
+    { id: 'home', icon: '', label: 'Home' },
+    { id: 'alerts', icon: '', label: 'Alerts' },
+    { id: 'incidents', icon: '', label: 'Incidents' },
+    { id: 'checkin', icon: '', label: 'Check-in' },
+    { id: 'more', icon: '', label: 'More' },
   ]
   return (
     <nav className="bottom-nav">

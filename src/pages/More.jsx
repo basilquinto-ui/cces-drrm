@@ -37,7 +37,7 @@ export default function More({ user, role, isAdmin, signOut, onStatusChange, onS
   async function resetCheckins() {
     const today = new Date().toISOString().split('T')[0]
     await resetTodayCheckins(today)
-    toast('🔄 Check-ins reset.', 'success')
+    toast(' Check-ins reset.', 'success')
   }
 
   async function saveResource() {
@@ -50,7 +50,7 @@ export default function More({ user, role, isAdmin, signOut, onStatusChange, onS
     }
 
     await updateResource(editRes.id, payload)
-    toast('✅ Resource updated!', 'success')
+    toast(' Resource updated!', 'success')
     setEditRes(null)
     loadData(fetchResources, setResources)
   }
@@ -82,7 +82,7 @@ export default function More({ user, role, isAdmin, signOut, onStatusChange, onS
 
       {view === 'admin' && (
         <>
-          <div className="section-title" style={{ marginBottom: 14 }}>⚙️ Admin Panel</div>
+          <div className="section-title" style={{ marginBottom: 14 }}> Admin Panel</div>
           <AdminPanel
             isAdmin={isAdmin}
             user={user}

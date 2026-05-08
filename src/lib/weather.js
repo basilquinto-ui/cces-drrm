@@ -26,7 +26,7 @@ export async function fetchWeather() {
   }
 }
 
-export const weatherEmoji = { sunny: '☀️', cloudy: '⛅', rainy: '🌧️', stormy: '⛈️' }
+export const weatherEmoji = { sunny: '', cloudy: '', rainy: '', stormy: '' }
 export const weatherLabel = {
   sunny: 'Sunny / Clear',
   cloudy: 'Partly Cloudy',

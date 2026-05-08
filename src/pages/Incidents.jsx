@@ -3,10 +3,10 @@ import { supabase } from '../lib/supabase'
 import { describeIncidentPhoto } from '../lib/gemini'
 import { useToast } from '../components/Toast'
 
-const hazardIcons = { earthquake: '🌍', typhoon: '🌀', flood: '🌊', fire: '🔥', landslide: '⛰️', general: '⚠️' }
+const hazardIcons = { earthquake: '', typhoon: '', flood: '', fire: '', landslide: '', general: '' }
 const sevBg = { minor: '#dcfce7', moderate: '#fef9c3', severe: '#fee2e2' }
-const filters = ['All', '🌍 Earthquake', '🌀 Typhoon', '🌊 Flooding', '🔥 Fire', '⛰️ Landslide']
-const filterMap = { 'All': null, '🌍 Earthquake': 'earthquake', '🌀 Typhoon': 'typhoon', '🌊 Flooding': 'flood', '🔥 Fire': 'fire', '⛰️ Landslide': 'landslide' }
+const filters = ['All', ' Earthquake', ' Typhoon', ' Flooding', ' Fire', ' Landslide']
+const filterMap = { 'All': null, ' Earthquake': 'earthquake', ' Typhoon': 'typhoon', ' Flooding': 'flood', ' Fire': 'fire', ' Landslide': 'landslide' }
 
 export default function Incidents({ isAdmin }) {
   const toast = useToast()
@@ -54,7 +54,7 @@ export default function Incidents({ isAdmin }) {
       const b64 = ev.target.result.split(',')[1]
       const mime = file.type
       const desc = await describeIncidentPhoto(b64, mime)
-      if (desc) { setDescription(desc); toast('✨ AI description generated!', 'success') }
+      if (desc) { setDescription(desc); toast(' AI description generated!', 'success') }
       else toast('Could not generate AI description.', '')
       setAiLoading(false)
     }
@@ -78,7 +78,7 @@ export default function Incidents({ isAdmin }) {
     const { error } = await supabase.from('incidents').insert({ location, hazard_type: hazard, description, severity, photo_url, reported_by: reportedBy, status: 'reported' })
     setSubmitting(false)
     if (error) { toast('Failed to submit report.', 'error'); return }
-    toast('📋 Incident reported!', 'success')
+    toast(' Incident reported!', 'success')
     setDescription(''); setLocation(''); setReportedBy(''); setPhotoFile(null); setPhotoPreview(null); setSeverity('minor'); setHazard('earthquake')
     setView('list'); loadIncidents()
   }
@@ -94,7 +94,7 @@ export default function Incidents({ isAdmin }) {
     <div className="fade-in">
       <button className="back-btn" onClick={() => setView('list')}>← Back</button>
       <div className="card">
-        <h2>📋 Report Incident</h2>
+        <h2> Report Incident</h2>
         <div className="form-group">
           <label className="form-label">Hazard Type</label>
           <div className="hazard-grid">
@@ -118,17 +118,17 @@ export default function Incidents({ isAdmin }) {
           <div className="sev-selector">
             {['minor', 'moderate', 'severe'].map(s => (
               <div key={s} className={`sev-option ${severity === s ? s : ''}`} onClick={() => setSeverity(s)}>
-                {s === 'minor' ? '🟢' : s === 'moderate' ? '🟡' : '🔴'} {s.charAt(0).toUpperCase() + s.slice(1)}
+                {s === 'minor' ? '' : s === 'moderate' ? '' : ''} {s.charAt(0).toUpperCase() + s.slice(1)}
               </div>
             ))}
           </div>
         </div>
         <div className="form-group">
-          <label className="form-label">Photo (optional) {aiLoading && <span style={{ color: 'var(--gold)', fontWeight: 700 }}>✨ AI analyzing...</span>}</label>
+          <label className="form-label">Photo (optional) {aiLoading && <span style={{ color: 'var(--gold)', fontWeight: 700 }}> AI analyzing...</span>}</label>
           <div className="photo-upload" onClick={() => document.getElementById('photoInput').click()}>
-            <div className="upload-icon">📷</div>
+            <div className="upload-icon"></div>
             <p>Tap to take photo or choose from gallery</p>
-            <p style={{ fontSize: 11, marginTop: 4, color: 'var(--gold)' }}>✨ AI will auto-describe the incident</p>
+            <p style={{ fontSize: 11, marginTop: 4, color: 'var(--gold)' }}> AI will auto-describe the incident</p>
             <input id="photoInput" type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhoto} />
           </div>
           {photoPreview && <img src={photoPreview} style={{ width: '100%', borderRadius: 10, marginTop: 10, maxHeight: 200, objectFit: 'cover' }} alt="Preview" />}
@@ -136,7 +136,7 @@ export default function Incidents({ isAdmin }) {
         <div className="form-group">
           <label className="form-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
             Description
-            {aiLoading && <span style={{ color: 'var(--gold)', fontSize: 11 }}>✨ Generating...</span>}
+            {aiLoading && <span style={{ color: 'var(--gold)', fontSize: 11 }}> Generating...</span>}
           </label>
           <textarea className="form-control" value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe what happened..." />
         </div>
@@ -144,14 +144,14 @@ export default function Incidents({ isAdmin }) {
           <label className="form-label">Your Name</label>
           <input className="form-control" value={reportedBy} onChange={e => setReportedBy(e.target.value)} placeholder="Enter your full name..." />
         </div>
-        <button className="btn btn-primary" onClick={submitIncident} disabled={submitting || aiLoading}>{submitting ? 'Submitting...' : '📋 Submit Report'}</button>
+        <button className="btn btn-primary" onClick={submitIncident} disabled={submitting || aiLoading}>{submitting ? 'Submitting...' : ' Submit Report'}</button>
       </div>
     </div>
   )
 
   return (
     <div className="fade-in">
-      <button className="btn btn-primary" style={{ marginBottom: 14 }} onClick={() => setView('report')}>📋 Report New Incident</button>
+      <button className="btn btn-primary" style={{ marginBottom: 14 }} onClick={() => setView('report')}> Report New Incident</button>
       <div className="filter-row">
         {filters.map(f => (
           <div key={f} className={`filter-pill ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>{f}</div>
@@ -159,10 +159,10 @@ export default function Incidents({ isAdmin }) {
       </div>
       <div className="card">
         {incidents.length === 0
-          ? <div className="empty-state"><div className="empty-icon">✅</div><p>No incidents found</p></div>
+          ? <div className="empty-state"><div className="empty-icon"></div><p>No incidents found</p></div>
           : incidents.map(inc => (
             <div key={inc.id} className="feed-item" style={{ cursor: 'pointer' }} onClick={() => setSelected(inc)}>
-              <div className="feed-icon" style={{ background: sevBg[inc.severity] || '#f1f5f9' }}>{hazardIcons[inc.hazard_type] || '⚠️'}</div>
+              <div className="feed-icon" style={{ background: sevBg[inc.severity] || '#f1f5f9' }}>{hazardIcons[inc.hazard_type] || ''}</div>
               <div className="feed-info">
                 <h4>{inc.description.slice(0, 60)}{inc.description.length > 60 ? '...' : ''}</h4>
                 <p>{inc.location} · {new Date(inc.created_at).toLocaleDateString('en-PH')} · By: {inc.reported_by}</p>
@@ -188,7 +188,7 @@ export default function Incidents({ isAdmin }) {
             {selected.photo_url && <img src={selected.photo_url} style={{ width: '100%', borderRadius: 10, marginBottom: 12, maxHeight: 200, objectFit: 'cover' }} alt="Incident" />}
             <p style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text)' }}>{selected.description}</p>
             <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 10 }}>
-              👤 {selected.reported_by} · 📅 {new Date(selected.created_at).toLocaleString('en-PH')}
+               {selected.reported_by} ·  {new Date(selected.created_at).toLocaleString('en-PH')}
             </div>
             {isAdmin && (
               <div style={{ marginTop: 14 }}>
