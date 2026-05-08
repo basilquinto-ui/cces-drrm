@@ -3,6 +3,15 @@ import { supabase } from '@/lib/supabase';
 const INCIDENT_PHOTO_BUCKET = 'incident-photos';
 const INCIDENT_PHOTO_SIGNED_URL_TTL_SECONDS = 60 * 60;
 
+export type RecentIncident = {
+  id: string;
+  created_at: string;
+  location: string | null;
+  hazard_type: string | null;
+  severity: string | null;
+  status: string | null;
+};
+
 /**
  * Upload an incident photo and return its storage object path.
  *
@@ -65,4 +74,18 @@ export async function createIncident(payload: Record<string, unknown>) {
 
 export async function listIncidents() {
   return (await supabase.from('incidents').select('*').order('created_at', { ascending: false })).data ?? [];
+}
+
+export async function getRecentIncidents(limit = 3): Promise<RecentIncident[]> {
+  const { data, error } = await supabase
+    .from('incidents')
+    .select('id, created_at, location, hazard_type, severity, status')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    throw new Error(`Failed to load recent incidents: ${error.message}`);
+  }
+
+  return (data as RecentIncident[] | null) ?? [];
 }
