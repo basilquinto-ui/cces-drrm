@@ -1,4 +1,18 @@
+import { useEffect, useState } from 'react'
+
 export default function ResourceEditModal({ resource, onClose, onSave }) {
+  const [form, setForm] = useState({ quantity: 0, condition: 'good', location: '' })
+
+  useEffect(() => {
+    if (resource) {
+      setForm({
+        quantity: resource.quantity,
+        condition: resource.condition,
+        location: resource.location,
+      })
+    }
+  }, [resource])
+
   if (!resource) return null
 
   return (
@@ -9,12 +23,21 @@ export default function ResourceEditModal({ resource, onClose, onSave }) {
 
         <div className="form-group">
           <label className="form-label">Quantity</label>
-          <input id="editQty" type="number" className="form-control" defaultValue={resource.quantity} />
+          <input
+            type="number"
+            className="form-control"
+            value={form.quantity}
+            onChange={(event) => setForm((v) => ({ ...v, quantity: Number(event.target.value) }))}
+          />
         </div>
 
         <div className="form-group">
           <label className="form-label">Condition</label>
-          <select id="editCond" className="form-control" defaultValue={resource.condition}>
+          <select
+            className="form-control"
+            value={form.condition}
+            onChange={(event) => setForm((v) => ({ ...v, condition: event.target.value }))}
+          >
             <option value="good">✅ Good</option>
             <option value="low">⚠️ Low</option>
             <option value="replace">❌ Replace</option>
@@ -23,12 +46,16 @@ export default function ResourceEditModal({ resource, onClose, onSave }) {
 
         <div className="form-group">
           <label className="form-label">Location</label>
-          <input id="editLoc" className="form-control" defaultValue={resource.location} />
+          <input
+            className="form-control"
+            value={form.location}
+            onChange={(event) => setForm((v) => ({ ...v, location: event.target.value }))}
+          />
         </div>
 
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="btn btn-outline" style={{ flex: 1 }} onClick={onClose}>Cancel</button>
-          <button className="btn btn-primary" style={{ flex: 2 }} onClick={onSave}>💾 Save</button>
+          <button className="btn btn-primary" style={{ flex: 2 }} onClick={() => onSave(form)}>💾 Save</button>
         </div>
       </div>
     </div>
