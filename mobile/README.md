@@ -9,9 +9,10 @@ Expo Router mobile foundation for CCES DRRM operations.
 3. Run type checks: `npm run typecheck`
 4. Start Expo: `npm run start`
 
-## Scope
+## Status
 
-- Protected authentication flow
-- Profile-aware role context
-- Alerts, incidents, and staff check-in flows
-- Operations reference modules for contacts and preparedness guides
+- Mobile foundation only.
+- Not public-launch-ready.
+- Requires Supabase RLS configuration.
+- Requires successful local mobile install and typecheck.
+- Requires Expo Go and on-device testing.
