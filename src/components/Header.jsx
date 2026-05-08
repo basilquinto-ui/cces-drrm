@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { Cloud, CloudRain, CloudLightning, Sun } from 'lucide-react'
 import logo from '../assets/logo.png'
 
 const skyClasses = {
@@ -9,7 +10,14 @@ const skyClasses = {
 }
 
 const statusBadgeClass = { normal: 'status-normal', watch: 'status-watch', alert: 'status-alert' }
-const statusLabel = { normal: ' Normal', watch: ' Watch', alert: ' Alert' }
+const statusLabel = { normal: 'Normal', watch: 'Watch', alert: 'Alert' }
+
+const weatherIcons = {
+  sunny: Sun,
+  cloudy: Cloud,
+  rainy: CloudRain,
+  stormy: CloudLightning,
+}
 
 export default function Header({ weather, status }) {
   const rainRef = useRef(null)
@@ -28,9 +36,10 @@ export default function Header({ weather, status }) {
     }
   }, [weather.type])
 
+  const WeatherIcon = weatherIcons[weather.type] || Cloud
   const weatherPill = weather.temp
-    ? `${weather.type === 'sunny' ? '' : weather.type === 'rainy' ? '' : weather.type === 'stormy' ? '' : ''} ${weather.temp}° · ${weather.description}`
-    : ' Loading...'
+    ? `${weather.temp}° · ${weather.description}`
+    : 'Loading...'
 
   return (
     <div style={{ height: 'var(--header-height)', flexShrink: 0, position: 'relative', overflow: 'hidden', boxShadow: '0 3px 16px rgba(0,0,0,0.25)' }}>
@@ -89,8 +98,20 @@ export default function Header({ weather, status }) {
           <span className={`badge ${statusBadgeClass[status]}`} style={{ fontSize: 11, padding: '4px 10px' }}>
             {statusLabel[status]}
           </span>
-          <div style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: 12, padding: '3px 8px', fontSize: 11, color: 'white', fontWeight: 700 }}>
-            {weatherPill}
+          <div style={{
+            background: 'rgba(255,255,255,0.2)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: 12,
+            padding: '3px 8px',
+            fontSize: 11,
+            color: 'white',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+          }}>
+            <WeatherIcon size={13} aria-hidden="true" />
+            <span>{weatherPill}</span>
           </div>
         </div>
       </div>
