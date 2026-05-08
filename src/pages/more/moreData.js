@@ -1,29 +1,67 @@
-export const CAT_ICONS = { medical: '', fire: '', equipment: '', supplies: '' }
+import {
+  Activity,
+  AlertTriangle,
+  Building2,
+  Flame,
+  HeartPulse,
+  Info,
+  Megaphone,
+  Package,
+  Phone,
+  Route,
+  Settings,
+  Stethoscope,
+  Waves,
+  Wrench,
+} from 'lucide-react'
+
+export const CAT_ICONS = {
+  medical: HeartPulse,
+  fire: Flame,
+  equipment: Wrench,
+  supplies: Package,
+}
+
 export const CAT_ORDER = ['medical', 'fire', 'equipment', 'supplies']
-export const HAZARD_ICONS = { earthquake: '', fire: '', flood: '', typhoon: '' }
+
+export const HAZARD_ICONS = {
+  earthquake: AlertTriangle,
+  fire: Flame,
+  flood: Waves,
+  typhoon: Activity,
+}
 
 export const CONTACT_SECTIONS = [
-  { title: ' Primary Emergency', items: [
-    { icon: '', bg: '#fee2e2', name: 'Emergency Hotline', sub: 'National Emergency', tel: '911' },
-    { icon: '', bg: '#fef9c3', name: 'Bureau of Fire Protection', sub: 'BFP Emergency', tel: '117' },
-    { icon: '', bg: '#dbeafe', name: 'PNP Camp Crame', sub: 'Camp Crame, QC', tel: '+6327226366' },
-  ]},
-  { title: ' DRRM Agencies', items: [
-    { icon: '', bg: '#dcfce7', name: 'NDRRMC Operations', sub: 'National DRRM Council', tel: '+6328911406' },
-    { icon: '', bg: '#e0f2fe', name: 'PAGASA Forecast', sub: 'Weather Bureau', tel: '+6328284480' },
-    { icon: '', bg: '#fef9c3', name: 'QC DRRMO', sub: 'Quezon City DRRM Office', tel: '+6328892860' },
-  ]},
-  { title: ' School Contacts', items: [
-    { icon: '', bg: '#f0f6ff', name: 'CCES Main Office', sub: '(02) 7754-2648', tel: '+6277542648' },
-    { icon: '', bg: '#f0f6ff', name: 'Camp Crame Station Hospital', sub: 'Nearest hospital · ~0.3km', tel: '+6327227801' },
-  ]},
+  {
+    title: 'Primary Emergency',
+    items: [
+      { icon: Phone, bg: '#fee2e2', name: 'Emergency Hotline', sub: 'National Emergency', tel: '911' },
+      { icon: Flame, bg: '#fef9c3', name: 'Bureau of Fire Protection', sub: 'BFP Emergency', tel: '117' },
+      { icon: Building2, bg: '#dbeafe', name: 'PNP Camp Crame', sub: 'Camp Crame, QC', tel: '+6327226366' },
+    ],
+  },
+  {
+    title: 'DRRM Agencies',
+    items: [
+      { icon: AlertTriangle, bg: '#dcfce7', name: 'NDRRMC Operations', sub: 'National DRRM Council', tel: '+6328911406' },
+      { icon: Activity, bg: '#e0f2fe', name: 'PAGASA Forecast', sub: 'Weather Bureau', tel: '+6328284480' },
+      { icon: Stethoscope, bg: '#fef9c3', name: 'QC DRRMO', sub: 'Quezon City DRRM Office', tel: '+6328892860' },
+    ],
+  },
+  {
+    title: 'School Contacts',
+    items: [
+      { icon: Building2, bg: '#f0f6ff', name: 'CCES Main Office', sub: '(02) 7754-2648', tel: '+6277542648' },
+      { icon: Stethoscope, bg: '#f0f6ff', name: 'Camp Crame Station Hospital', sub: 'Nearest hospital · ~0.3km', tel: '+6327227801' },
+    ],
+  },
 ]
 
 export const MORE_MENU_ITEMS = (isAdmin) => [
-  { id: 'evacuation', icon: '', label: 'Evacuation Routes', sub: 'Routes per hazard type' },
-  { id: 'resources', icon: '', label: 'Resource Inventory', sub: 'Emergency supplies' },
-  { id: 'contacts', icon: '', label: 'Emergency Contacts', sub: 'One-tap call' },
-  { id: 'drills', icon: '', label: 'Drill History', sub: 'Past drill records' },
-  { id: 'admin', icon: '', label: 'Admin Panel', sub: isAdmin ? ' Logged in' : 'Coordinator only' },
-  { id: 'about', icon: 'ℹ', label: 'About', sub: 'App info & contacts' },
+  { id: 'evacuation', icon: Route, label: 'Evacuation Routes', sub: 'Routes per hazard type' },
+  { id: 'resources', icon: Package, label: 'Resource Inventory', sub: 'Emergency supplies' },
+  { id: 'contacts', icon: Phone, label: 'Emergency Contacts', sub: 'One-tap call' },
+  { id: 'drills', icon: Activity, label: 'Drill History', sub: 'Past drill records' },
+  { id: 'admin', icon: Settings, label: 'Admin Panel', sub: isAdmin ? 'Logged in' : 'Coordinator only' },
+  { id: 'about', icon: Info, label: 'About', sub: 'App info & contacts' },
 ]
