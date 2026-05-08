@@ -38,8 +38,10 @@ export default function IncidentsScreen() {
       return;
     }
     setSubmitting(true);
-    const photoUrl = photoUri ? await uploadIncidentPhoto(session.user.id, photoUri) : null;
-    const payload = { location: location.trim(), hazard_type: hazardType, description: description.trim(), severity, photo_url: photoUrl, reported_by: profile?.full_name || session.user.email, status: 'reported' };
+    const photoUrlOrPath = photoUri ? await uploadIncidentPhoto(session.user.id, photoUri) : null;
+    // photo_url currently stores either a legacy public URL or a storage path.
+    // Use resolveIncidentPhotoUrl() when displaying images.
+    const payload = { location: location.trim(), hazard_type: hazardType, description: description.trim(), severity, photo_url: photoUrlOrPath, reported_by: profile?.full_name || session.user.email, status: 'reported' };
     const { error: createError } = await createIncident(payload);
     setSubmitting(false);
     if (createError) {

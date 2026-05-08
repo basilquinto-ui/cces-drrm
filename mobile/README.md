@@ -22,4 +22,5 @@ Expo Router mobile foundation for CCES DRRM operations.
 - Requires Supabase RLS configuration.
 - Requires successful local mobile install and typecheck.
 - Requires Expo Go and on-device testing.
-- Incident photo URLs depend on Supabase storage policy allowing public read; otherwise signed URL handling is required.
+- Incident photos should be uploaded as storage object paths (for example: `incidents/{userId}/{timestamp}.jpg`) so the `incident-photos` bucket can be private.
+- Legacy records may still use public `photo_url` values; newer reads should resolve either a public URL or a storage path via signed URLs.
