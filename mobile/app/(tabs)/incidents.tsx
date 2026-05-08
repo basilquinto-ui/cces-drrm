@@ -21,7 +21,13 @@ export default function IncidentsScreen() {
 
   const pickPhoto = async () => {
     const img = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, quality: 0.8 });
-    if (!img.canceled) setPhotoUri(img.assets[0].uri);
+    if (img.canceled) return;
+    const asset = img.assets[0];
+    if (!asset?.uri) {
+      setError('No photo was selected.');
+      return;
+    }
+    setPhotoUri(asset.uri);
   };
 
   const submit = async () => {
