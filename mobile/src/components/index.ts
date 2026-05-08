@@ -13,3 +13,5 @@ export * from './WeatherRiskCard';
 export * from './DailyHazardMap';
 export * from './DashboardQuickActions';
 export * from './RecentIncidentsPreview';
+
+export * from './RoleGate';
