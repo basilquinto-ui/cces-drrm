@@ -54,3 +54,25 @@ The app is **not public-launch-ready** until these RLS policies are applied in y
 ## Local testing notes
 
 This repository does not run Supabase SQL automatically in this environment. Apply these scripts manually in **Supabase Dashboard → SQL Editor**.
+
+
+## Schema baseline apply order
+
+Apply in this order:
+
+1. **Schema**
+   - `supabase/schema/001_core_tables.sql`
+   - `supabase/schema/002_indexes_constraints.sql`
+   - `supabase/schema/003_seed_minimum_reference_data.sql`
+2. **Policies**
+   - `supabase/policies/001_profiles.sql`
+   - `supabase/policies/002_alerts.sql`
+   - `supabase/policies/003_incidents.sql`
+   - `supabase/policies/004_checkins.sql`
+   - `supabase/policies/005_storage.sql`
+3. **Manual test**
+   - Re-run app flows (alerts, incidents, check-ins, resources, routes, drills) with role-based accounts.
+
+## Baseline scope note
+
+This baseline is a starting point for local/project setup only. It is **not production-ready** until applied and validated in your Supabase project with manual and role-based tests.
