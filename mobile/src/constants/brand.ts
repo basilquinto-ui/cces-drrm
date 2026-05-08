@@ -3,7 +3,7 @@ export const brand = {
   shortName: 'CCES DRRM',
   schoolName: 'Camp Crame Elementary School',
   tagline: 'School safety status and emergency operations',
-  supportEmail: 'support@cces-drrm.local',
+  supportEmail: 'campcrame_es@yahoo.com.ph',
   emergencyNote: 'For urgent incidents, contact school emergency channels immediately.',
   colors: {
     commandNavy: '#102A4A',
