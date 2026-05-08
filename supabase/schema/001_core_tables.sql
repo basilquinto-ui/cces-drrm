@@ -52,7 +52,7 @@ create table if not exists public.checkins (
   created_at timestamptz not null default now(),
   staff_id uuid not null references public.staff(id) on delete cascade,
   date date not null default current_date,
-  status text not null check (status in ('safe', 'medical', 'evacuation', 'unknown')),
+  status text not null check (status in ('safe', 'needs_help', 'medical', 'evacuation', 'not_on_campus')),
   checked_in_at timestamptz not null default now()
 );
 
