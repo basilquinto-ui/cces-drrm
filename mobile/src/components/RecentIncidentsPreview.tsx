@@ -11,13 +11,13 @@ import { getRecentIncidents, type RecentIncident } from '@/services/incidents';
 import { formatDateTime } from '@/utils/formatters';
 
 const toneMap: Record<string, 'danger' | 'warning' | 'success' | 'info'> = {
-  critical: 'danger',
-  high: 'danger',
-  medium: 'warning',
-  low: 'success',
-  open: 'warning',
+  severe: 'danger',
+  moderate: 'warning',
+  minor: 'success',
+  reported: 'warning',
+  acknowledged: 'info',
+  responding: 'warning',
   resolved: 'success',
-  closed: 'success',
 };
 
 const toTone = (value: string | null) => toneMap[value?.toLowerCase() ?? ''] ?? 'info';
