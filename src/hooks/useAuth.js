@@ -60,8 +60,10 @@ export function useAuth() {
     await supabase.auth.signOut()
   }
 
-  const role = profile?.role ?? DEFAULT_ROLE
-  const isAdmin = role === 'admin'
+  const activeRole = profile?.active === false ? DEFAULT_ROLE : (profile?.role ?? DEFAULT_ROLE)
+  const isAdmin = profile?.active !== false && profile?.role === 'admin'
+
+  const role = activeRole
 
   return { user, profile, role, loading, signIn, signOut, isAdmin }
 }
