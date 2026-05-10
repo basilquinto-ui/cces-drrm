@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 
 const DEFAULT_ROLE = 'viewer'
@@ -7,6 +7,14 @@ export function useAuth() {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const initialized = useRef(false)
+
+  function finishLoadingOnce() {
+    if (!initialized.current) {
+      initialized.current = true
+      setLoading(false)
+    }
+  }
 
   const loadProfile = useCallback(async (authUser) => {
     if (!authUser?.id) {
@@ -37,6 +45,14 @@ export function useAuth() {
   }, [])
 
   useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!initialized.current) {
+        console.error('Auth initialization timed out.')
+        initialized.current = true
+        setLoading(false)
+      }
+    }, 8000)
+
     const initAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
@@ -48,11 +64,9 @@ export function useAuth() {
         setUser(null)
         setProfile(null)
       } finally {
-        setLoading(false)
+        finishLoadingOnce()
       }
     }
-
-    initAuth()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       try {
@@ -64,11 +78,16 @@ export function useAuth() {
         setUser(session?.user ?? null)
         setProfile(null)
       } finally {
-        setLoading(false)
+        finishLoadingOnce()
       }
     })
 
-    return () => subscription.unsubscribe()
+    initAuth()
+
+    return () => {
+      clearTimeout(timeout)
+      subscription.unsubscribe()
+    }
   }, [loadProfile])
 
   const signIn = async (email, password) => {
