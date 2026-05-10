@@ -13,9 +13,9 @@ function BackButton({ onBack }) {
   return <button className="back-btn" onClick={onBack}>← Back</button>
 }
 
-export default function More({ user, role, isAdmin, signOut, onStatusChange, onSignalChange }) {
+export default function More({ user, role, isAdmin, signOut, onStatusChange, onSignalChange, initialView = 'main' }) {
   const toast = useToast()
-  const [view, setView] = useState('main')
+  const [view, setView] = useState(initialView)
   const [resources, setResources] = useState([])
   const [routes, setRoutes] = useState([])
   const [drills, setDrills] = useState([])

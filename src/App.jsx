@@ -1,30 +1,37 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ToastProvider } from './components/Toast'
 import Splash from './components/Splash'
-import Header from './components/Header'
-import BottomNav from './components/BottomNav'
-import Home from './pages/Home'
+import Login from './pages/Login'
 import Alerts from './pages/Alerts'
 import Incidents from './pages/Incidents'
 import CheckIn from './pages/CheckIn'
-import More from './pages/More'
-import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+import Resources from './pages/Resources'
+import EvacuationRoutes from './pages/EvacuationRoutes'
+import Drills from './pages/Drills'
+import Admin from './pages/Admin'
+import Settings from './pages/Settings'
+import AppShell from './components/layout/AppShell'
 import { fetchWeather } from './lib/weather'
 import { useAuth } from './hooks/useAuth'
 
 export default function App() {
   const { user, role, loading: authLoading, signIn, signOut, isAdmin } = useAuth()
   const [splash, setSplash] = useState(true)
-  const [tab, setTab] = useState('home')
+  const [tab, setTab] = useState('dashboard')
   const [weather, setWeather] = useState({ type: 'sunny', loading: true })
   const [signal, setSignal] = useState(0)
   const [status, setStatus] = useState('normal')
+  const [menuOpen, setMenuOpen] = useState(true)
 
   useEffect(() => {
-    setTimeout(() => setSplash(false), 4000)
+    const timer = setTimeout(() => setSplash(false), 4000)
     loadWeather()
     const interval = setInterval(loadWeather, 10 * 60 * 1000)
-    return () => clearInterval(interval)
+    return () => {
+      clearTimeout(timer)
+      clearInterval(interval)
+    }
   }, [])
 
   async function loadWeather() {
@@ -37,44 +44,36 @@ export default function App() {
     return error || null
   }
 
-  // Show splash first
-  if (splash) return <ToastProvider><Splash visible={true} /></ToastProvider>
+  if (splash) return <ToastProvider><Splash visible /></ToastProvider>
+  if (authLoading) return <div className="loading-screen">Loading...</div>
+  if (!user) return <ToastProvider><Login onLogin={handleLogin} /></ToastProvider>
 
-  // Still checking auth state
-  if (authLoading) return (
-    <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f1923' }}>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ width: 40, height: 40, border: '3px solid rgba(255,255,255,0.1)', borderTop: '3px solid #E8A020', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-      </div>
-    </div>
-  )
-
-  // Not logged in — show login screen
-  if (!user) return (
-    <ToastProvider>
-      <Login onLogin={handleLogin} />
-    </ToastProvider>
-  )
-
-  // Logged in — show full app
+  const sharedProps = { user, role, isAdmin, signOut, onStatusChange: setStatus, onSignalChange: setSignal }
   const pages = {
-    home: <Home weather={weather} signal={signal} onSignalChange={setSignal} onTabChange={setTab} status={status} onStatusChange={setStatus} />,
+    dashboard: <Dashboard weather={weather} signal={signal} status={status} />,
     alerts: <Alerts isAdmin={isAdmin} onStatusChange={setStatus} />,
     incidents: <Incidents isAdmin={isAdmin} />,
     checkin: <CheckIn isAdmin={isAdmin} />,
-    more: <More user={user} role={role} isAdmin={isAdmin} signIn={signIn} signOut={signOut} onStatusChange={setStatus} onSignalChange={setSignal} />,
+    resources: <Resources {...sharedProps} />,
+    routes: <EvacuationRoutes {...sharedProps} />,
+    drills: <Drills {...sharedProps} />,
+    admin: <Admin {...sharedProps} />,
+    settings: <Settings {...sharedProps} />,
   }
 
   return (
     <ToastProvider>
-      <div className="app">
-        <Header weather={weather} status={status} />
-        <div className="content">
-          {pages[tab]}
-        </div>
-        <BottomNav active={tab} onChange={setTab} />
-      </div>
+      <AppShell
+        activeTab={tab}
+        onTabChange={setTab}
+        isAdmin={isAdmin}
+        role={role}
+        status={status}
+        menuOpen={menuOpen}
+        onToggleMenu={() => setMenuOpen(prev => !prev)}
+      >
+        {pages[tab]}
+      </AppShell>
     </ToastProvider>
   )
 }
