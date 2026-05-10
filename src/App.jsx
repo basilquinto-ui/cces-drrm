@@ -16,8 +16,9 @@ import StaffProfiles from './pages/StaffProfiles'
 import AppShell from './components/layout/AppShell'
 import { fetchWeather } from './lib/weather'
 import { useAuth } from './hooks/useAuth'
+import PublicLanding from './pages/PublicLanding'
 
-export default function App() {
+function PortalApp() {
   const { user, role, loading: authLoading, signIn, signOut, isAdmin } = useAuth()
   const [splash, setSplash] = useState(true)
   const [tab, setTab] = useState('dashboard')
@@ -64,19 +65,10 @@ export default function App() {
     settings: <Settings {...sharedProps} />,
   }
 
-  return (
-    <ToastProvider>
-      <AppShell
-        activeTab={tab}
-        onTabChange={setTab}
-        isAdmin={isAdmin}
-        role={role}
-        status={status}
-        menuOpen={menuOpen}
-        onToggleMenu={() => setMenuOpen(prev => !prev)}
-      >
-        {pages[tab]}
-      </AppShell>
-    </ToastProvider>
-  )
+  return <ToastProvider><AppShell activeTab={tab} onTabChange={setTab} isAdmin={isAdmin} role={role} status={status} menuOpen={menuOpen} onToggleMenu={() => setMenuOpen(prev => !prev)}>{pages[tab]}</AppShell></ToastProvider>
+}
+
+export default function App() {
+  const isPortalRoute = window.location.pathname.startsWith('/portal')
+  return isPortalRoute ? <PortalApp /> : <PublicLanding />
 }
