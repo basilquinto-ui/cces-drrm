@@ -14,7 +14,7 @@ function getResourceIcon(name) {
   return '📦'
 }
 
-export default function ResourcesView({ resources, isAdmin, editRes, onEdit, onCloseEdit, onSaveEdit }) {
+export default function ResourcesView({ resources, isAdmin, editRes, resourceForm, onEdit, onCloseEdit, onFormChange, onSaveEdit }) {
   const grouped = CAT_ORDER.reduce((acc, category) => {
     const items = resources.filter((resource) => resource.category === category)
     if (items.length > 0) acc[category] = items
@@ -60,7 +60,7 @@ export default function ResourcesView({ resources, isAdmin, editRes, onEdit, onC
         </div>
       ))}
 
-      <ResourceEditModal resource={editRes} onClose={onCloseEdit} onSave={onSaveEdit} />
+      <ResourceEditModal resource={editRes} form={resourceForm} onClose={onCloseEdit} onFormChange={onFormChange} onSave={onSaveEdit} />
     </>
   )
 }

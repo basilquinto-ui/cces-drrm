@@ -10,7 +10,7 @@ import DrillsView from './more/DrillsView'
 import { fetchResources, fetchRoutes, fetchDrills, fetchStaff, updateResource, resetTodayCheckins } from '../services/moreService'
 
 function BackButton({ onBack }) {
-  return <button className="back-btn" onClick={onBack}>← Back</button>
+  return <button className="back-btn" onClick={onBack}>Back</button>
 }
 
 export default function More({ user, role, isAdmin, signOut, onStatusChange, onSignalChange, initialView = 'main' }) {
@@ -21,6 +21,7 @@ export default function More({ user, role, isAdmin, signOut, onStatusChange, onS
   const [drills, setDrills] = useState([])
   const [staff, setStaff] = useState([])
   const [editRes, setEditRes] = useState(null)
+  const [resourceForm, setResourceForm] = useState({ quantity: '', condition: 'good', location: '' })
 
   useEffect(() => {
     if (view === 'resources') loadData(fetchResources, setResources)
@@ -34,23 +35,32 @@ export default function More({ user, role, isAdmin, signOut, onStatusChange, onS
     if (data) setter(data)
   }
 
+  function handleEditResource(resource) {
+    setEditRes(resource)
+    setResourceForm({
+      quantity: resource.quantity,
+      condition: resource.condition,
+      location: resource.location,
+    })
+  }
+
   async function resetCheckins() {
     const today = new Date().toISOString().split('T')[0]
     await resetTodayCheckins(today)
-    toast('🔄 Check-ins reset.', 'success')
+    toast('Check-ins reset.', 'success')
   }
 
   async function saveResource() {
     if (!editRes) return
     const payload = {
-      quantity: parseInt(document.getElementById('editQty')?.value ?? editRes.quantity),
-      condition: document.getElementById('editCond')?.value ?? editRes.condition,
-      location: document.getElementById('editLoc')?.value ?? editRes.location,
+      quantity: parseInt(resourceForm.quantity, 10) || editRes.quantity,
+      condition: resourceForm.condition || editRes.condition,
+      location: resourceForm.location || editRes.location,
       last_checked: new Date().toISOString().split('T')[0],
     }
 
     await updateResource(editRes.id, payload)
-    toast('✅ Resource updated!', 'success')
+    toast('Resource updated.', 'success')
     setEditRes(null)
     loadData(fetchResources, setResources)
   }
@@ -68,21 +78,21 @@ export default function More({ user, role, isAdmin, signOut, onStatusChange, onS
           resources={resources}
           isAdmin={isAdmin}
           editRes={editRes}
-          onEdit={setEditRes}
+          resourceForm={resourceForm}
+          onEdit={handleEditResource}
           onCloseEdit={() => setEditRes(null)}
+          onFormChange={setResourceForm}
           onSaveEdit={saveResource}
         />
       )}
 
       {view === 'evacuation' && <EvacuationView routes={routes} />}
-
       {view === 'contacts' && <ContactsView />}
-
       {view === 'drills' && <DrillsView drills={drills} />}
 
       {view === 'admin' && (
         <>
-          <div className="section-title" style={{ marginBottom: 14 }}>⚙️ Admin Panel</div>
+          <div className="section-title" style={{ marginBottom: 14 }}>Admin Panel</div>
           <AdminPanel
             isAdmin={isAdmin}
             user={user}
