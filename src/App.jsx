@@ -52,8 +52,8 @@ function PortalApp() {
 
   const sharedProps = { user, role, isAdmin, signOut, onStatusChange: setStatus, onSignalChange: setSignal }
   const pages = {
-    dashboard: <Dashboard weather={weather} signal={signal} status={status} />,
-    weatherRisk: <WeatherRisk weather={weather} signal={signal} status={status} onRefreshWeather={loadWeather} />,
+    dashboard: <Dashboard weather={weather} signal={signal} status={status} isAdmin={isAdmin} />,
+    weatherRisk: <WeatherRisk weather={weather} signal={signal} status={status} onRefreshWeather={loadWeather} isAdmin={isAdmin} />,
     alerts: <Alerts isAdmin={isAdmin} user={user} onStatusChange={setStatus} />,
     incidents: <Incidents isAdmin={isAdmin} />,
     checkin: <CheckIn isAdmin={isAdmin} />,

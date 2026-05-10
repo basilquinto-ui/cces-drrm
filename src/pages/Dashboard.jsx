@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import PageHeader from '../components/layout/PageHeader'
 import { fetchDashboardSummary } from '../services/dashboardService'
+import OfficialAdvisoryPanel from '../components/hazards/OfficialAdvisoryPanel'
+import EarthquakePanel from '../components/hazards/EarthquakePanel'
 
 function formatLabel(value) {
   if (!value || typeof value !== 'string') return 'Unknown'
@@ -16,7 +18,7 @@ function formatDateTime(value) {
   return Number.isNaN(date.getTime()) ? 'Unknown date' : date.toLocaleString('en-PH')
 }
 
-export default function Dashboard({ weather, signal, status }) {
+export default function Dashboard({ weather, signal, status, isAdmin }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [summary, setSummary] = useState({
@@ -99,6 +101,9 @@ export default function Dashboard({ weather, signal, status }) {
           <p>Review evacuation routes and watch zones before class starts.</p>
         </section>
       </div>
+
+      <OfficialAdvisoryPanel isAdmin={isAdmin} />
+      <EarthquakePanel isAdmin={isAdmin} />
 
       <section className="portal-card" style={{ marginTop: 16 }}>
         <h3>Recent Incidents</h3>
