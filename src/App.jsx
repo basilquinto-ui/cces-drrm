@@ -46,8 +46,7 @@ export default function App() {
     return error || null
   }
 
-  if (splash) return <ToastProvider><Splash visible /></ToastProvider>
-  if (authLoading) return <div className="loading-screen">Loading...</div>
+  if (splash || authLoading) return <ToastProvider><Splash visible /></ToastProvider>
   if (!user) return <ToastProvider><Login onLogin={handleLogin} /></ToastProvider>
 
   const sharedProps = { user, role, isAdmin, signOut, onStatusChange: setStatus, onSignalChange: setSignal }
