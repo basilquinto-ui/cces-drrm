@@ -26,6 +26,7 @@ begin
 end
 $$;
 
+-- 004_checkins.sql policy names are covered by the DROP POLICY IF EXISTS block below.
 -- Drop legacy checkins policies from 004_checkins.sql (and current names)
 -- before creating revised policies to avoid duplicate permissive policies.
 drop policy if exists checkins_select_staff_own on public.checkins;
