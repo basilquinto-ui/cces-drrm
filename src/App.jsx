@@ -11,6 +11,7 @@ import EvacuationRoutes from './pages/EvacuationRoutes'
 import Drills from './pages/Drills'
 import Admin from './pages/Admin'
 import Settings from './pages/Settings'
+import StaffProfiles from './pages/StaffProfiles'
 import AppShell from './components/layout/AppShell'
 import { fetchWeather } from './lib/weather'
 import { useAuth } from './hooks/useAuth'
@@ -58,6 +59,7 @@ export default function App() {
     routes: <EvacuationRoutes {...sharedProps} />,
     drills: <Drills {...sharedProps} />,
     admin: <Admin {...sharedProps} />,
+    staffProfiles: <StaffProfiles isAdmin={isAdmin} />,
     settings: <Settings {...sharedProps} />,
   }
 

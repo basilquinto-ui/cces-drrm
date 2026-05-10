@@ -12,6 +12,7 @@ const navItems = [
   { key: 'routes', label: 'Evacuation Routes', icon: RouteIcon },
   { key: 'drills', label: 'Drills', icon: DrillIcon },
   { key: 'admin', label: 'Admin', icon: AdminIcon, adminOnly: true },
+  { key: 'staffProfiles', label: 'Staff / Profiles', icon: AdminIcon, adminOnly: true },
   { key: 'settings', label: 'About / Settings', icon: SettingsIcon },
 ]
 
