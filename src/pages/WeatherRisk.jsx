@@ -6,8 +6,10 @@ import WeatherGuidanceCards from '../components/weather/WeatherGuidanceCards'
 import WeatherMetricGrid from '../components/weather/WeatherMetricGrid'
 import WeatherPresentationMode from '../components/weather/WeatherPresentationMode'
 import { ADVISORY_NOTE, formatUpdated, getWeatherMetrics, toRiskLevel } from '../components/weather/weatherRiskUtils'
+import OfficialAdvisoryPanel from '../components/hazards/OfficialAdvisoryPanel'
+import EarthquakePanel from '../components/hazards/EarthquakePanel'
 
-export default function WeatherRisk({ weather, signal, status, onRefreshWeather }) {
+export default function WeatherRisk({ weather, signal, status, onRefreshWeather, isAdmin }) {
   const [isPresentationMode, setIsPresentationMode] = useState(false)
   const data = weather || {}
   const provider = data.provider || 'WeatherAPI.com'
@@ -65,6 +67,9 @@ export default function WeatherRisk({ weather, signal, status, onRefreshWeather 
           <section className="portal-card" style={{ marginTop: 14 }}>
             <HourlyForecastStrip hourly={hourly} title="Next 6 to 12 Hours Forecast" />
           </section>
+
+          <OfficialAdvisoryPanel isAdmin={isAdmin} />
+          <EarthquakePanel isAdmin={isAdmin} />
         </>
       )}
     </div>
