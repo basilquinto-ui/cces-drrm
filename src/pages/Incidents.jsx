@@ -1,10 +1,24 @@
 import { useEffect, useMemo, useState } from 'react'
 import { fetchIncidents, updateIncidentNotes, updateIncidentStatus } from '../services/incidentManagementService'
+import PageHeader from '../components/layout/PageHeader'
 
 const STATUS_OPTIONS = ['reported', 'acknowledged', 'responding', 'resolved']
 const SEVERITY_OPTIONS = ['minor', 'moderate', 'severe']
 const STATUS_LABELS = { reported: 'Reported', acknowledged: 'Acknowledged', responding: 'Responding', resolved: 'Resolved' }
 const SEVERITY_LABELS = { minor: 'Minor', moderate: 'Moderate', severe: 'Severe' }
+
+
+function formatLabel(value) {
+  if (!value) return 'Unknown'
+  return value.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+}
+
+function formatDateTime(value) {
+  if (!value) return 'Unknown date'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Unknown date'
+  return date.toLocaleString('en-PH')
+}
 
 export default function Incidents({ isAdmin }) {
   const [incidents, setIncidents] = useState([])
@@ -64,7 +78,7 @@ export default function Incidents({ isAdmin }) {
 
   return (
     <section>
-      <h2>Incident Management</h2>
+      <PageHeader title="Incident Management" description="Review, filter, and manage reports submitted from the field." />
       <div className="dashboard-grid">
         <div className="portal-card"><h3>Total Incidents</h3><p className="status-badge">{totalCount}</p></div>
         <div className="portal-card"><h3>Open Incidents</h3><p className="status-badge">{openCount}</p></div>
@@ -81,7 +95,7 @@ export default function Incidents({ isAdmin }) {
             <option value="all">All Severities</option>{SEVERITY_OPTIONS.map(s => <option key={s} value={s}>{SEVERITY_LABELS[s]}</option>)}
           </select>
           <select className="form-control" value={filters.hazardType} onChange={e => setFilters(f => ({ ...f, hazardType: e.target.value }))}>
-            <option value="all">All Hazard Types</option>{hazardTypes.map(h => <option key={h} value={h}>{h.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>)}
+            <option value="all">All Hazard Types</option>{hazardTypes.map(h => <option key={h} value={h}>{formatLabel(h)}</option>)}
           </select>
           <input className="form-control" placeholder="Search location, reporter, description" value={filters.search} onChange={e => setFilters(f => ({ ...f, search: e.target.value }))} />
         </div>
@@ -99,11 +113,11 @@ export default function Incidents({ isAdmin }) {
               <tbody>
                 {incidents.map(incident => (
                   <tr key={incident.id}>
-                    <td>{new Date(incident.created_at).toLocaleString()}</td>
+                    <td>{formatDateTime(incident.created_at)}</td>
                     <td>{incident.location}</td>
-                    <td>{(incident.hazard_type || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</td>
-                    <td><span className={`badge badge-${incident.severity}`}>{SEVERITY_LABELS[incident.severity] || incident.severity}</span></td>
-                    <td>{isAdmin ? <select className="form-control" disabled={savingId === incident.id} value={incident.status} onChange={e => handleStatusUpdate(incident.id, e.target.value)}>{STATUS_OPTIONS.map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}</select> : <span className={`badge badge-${incident.status}`}>{STATUS_LABELS[incident.status] || incident.status}</span>}</td>
+                    <td>{formatLabel(incident.hazard_type)}</td>
+                    <td><span className={`badge badge-${incident.severity}`}>{SEVERITY_LABELS[incident.severity] || formatLabel(incident.severity)}</span></td>
+                    <td>{isAdmin ? <select className="form-control" disabled={savingId === incident.id} value={incident.status} onChange={e => handleStatusUpdate(incident.id, e.target.value)}>{STATUS_OPTIONS.map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}</select> : <span className={`badge badge-${incident.status}`}>{STATUS_LABELS[incident.status] || formatLabel(incident.status)}</span>}</td>
                     <td>{incident.reported_by}</td>
                     <td>{incident.description}</td>
                     <td>{incident.photo_url ? <a href={incident.photo_url} target="_blank" rel="noopener noreferrer">View Photo</a> : '—'}</td>
