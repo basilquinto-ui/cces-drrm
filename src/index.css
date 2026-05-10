@@ -306,3 +306,169 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 .hourly-card h4 { margin: 5px 0; color: #12243c; }
 .hourly-card p { margin: 4px 0; font-size: .9rem; }
 @media (max-width: 760px) { .weather-hero { grid-template-columns: 1fr; } }
+
+.weather-scene {
+  width: 230px;
+  height: 112px;
+  border: 1px solid #dce4ee;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #edf4fb 0%, #f8fbff 100%);
+  position: relative;
+  overflow: hidden;
+}
+.scene-sky { position: absolute; inset: 0; }
+.scene-sun {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  top: 16px;
+  right: 20px;
+  background: radial-gradient(circle, #ffd977 0%, #f7c95a 62%, rgba(247, 201, 90, 0.2) 100%);
+  opacity: 0;
+}
+.scene-rays {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  top: 2px;
+  right: 6px;
+  opacity: 0;
+  background: repeating-conic-gradient(from 0deg, rgba(245, 198, 74, 0.28) 0deg 8deg, transparent 8deg 26deg);
+}
+.scene-cloud {
+  position: absolute;
+  background: #d6e0ec;
+  border-radius: 999px;
+  opacity: 0;
+}
+.scene-cloud::before,
+.scene-cloud::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: inherit;
+}
+.cloud-a { width: 78px; height: 22px; top: 34px; left: 20px; }
+.cloud-a::before { width: 24px; height: 24px; left: 10px; top: -11px; }
+.cloud-a::after { width: 29px; height: 29px; left: 34px; top: -15px; }
+.cloud-b { width: 64px; height: 19px; top: 50px; left: 92px; opacity: 0; }
+.cloud-b::before { width: 20px; height: 20px; left: 8px; top: -10px; }
+.cloud-b::after { width: 24px; height: 24px; left: 28px; top: -12px; }
+.scene-rain,
+.scene-rain-heavy {
+  position: absolute;
+  inset: 40px 0 0;
+  opacity: 0;
+  background-size: 15px 15px;
+  background-repeat: repeat;
+}
+.scene-rain {
+  background-image: linear-gradient(120deg, transparent 0 63%, rgba(98, 132, 168, 0.3) 63% 67%, transparent 67% 100%);
+}
+.scene-rain-heavy {
+  background-image: linear-gradient(120deg, transparent 0 56%, rgba(82, 116, 152, 0.36) 56% 61%, transparent 61% 100%);
+  background-size: 11px 13px;
+}
+.scene-lightning {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: linear-gradient(135deg, transparent 40%, rgba(255, 249, 222, 0.28) 48%, transparent 56%);
+}
+.scene-wind {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background-image:
+    linear-gradient(90deg, transparent 0 16%, rgba(113, 141, 173, 0.2) 16% 28%, transparent 28% 100%),
+    linear-gradient(90deg, transparent 0 28%, rgba(113, 141, 173, 0.14) 28% 40%, transparent 40% 100%),
+    linear-gradient(90deg, transparent 0 48%, rgba(113, 141, 173, 0.16) 48% 60%, transparent 60% 100%);
+  background-size: 200px 22px, 210px 22px, 185px 22px;
+  background-repeat: no-repeat;
+  background-position: -160px 30px, -170px 54px, -150px 76px;
+}
+
+.weather-scene-clear .scene-sun,
+.weather-scene-partlyCloudy .scene-sun { opacity: 1; }
+.weather-scene-clear .scene-rays,
+.weather-scene-partlyCloudy .scene-rays { opacity: .7; }
+.weather-scene-partlyCloudy .cloud-a,
+.weather-scene-partlyCloudy .cloud-b,
+.weather-scene-cloudy .cloud-a,
+.weather-scene-cloudy .cloud-b { opacity: .95; }
+.weather-scene-lightRain .cloud-a,
+.weather-scene-lightRain .cloud-b,
+.weather-scene-heavyRain .cloud-a,
+.weather-scene-heavyRain .cloud-b,
+.weather-scene-thunderstorm .cloud-a,
+.weather-scene-thunderstorm .cloud-b { opacity: .98; background: #c9d4e2; }
+.weather-scene-lightRain .scene-rain,
+.weather-scene-heavyRain .scene-rain,
+.weather-scene-thunderstorm .scene-rain { opacity: .9; }
+.weather-scene-heavyRain .scene-rain-heavy,
+.weather-scene-thunderstorm .scene-rain-heavy { opacity: .95; }
+.weather-scene-windy .cloud-a,
+.weather-scene-windy .cloud-b { opacity: .6; }
+.weather-scene-windy .scene-wind { opacity: 1; }
+.weather-scene-unavailable { background: linear-gradient(180deg, #f2f5f9 0%, #f8fafc 100%); }
+.weather-scene-unavailable .scene-sky { background: linear-gradient(180deg, rgba(145, 163, 186, 0.15) 0%, transparent 100%); }
+
+@keyframes sunGlow {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.04); filter: brightness(1.06); }
+}
+@keyframes raysRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes cloudDrift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(10px); }
+}
+@keyframes rainMove {
+  from { background-position: 0 0; }
+  to { background-position: 0 22px; }
+}
+@keyframes windMove {
+  from { background-position: -160px 30px, -170px 54px, -150px 76px; }
+  to { background-position: 60px 30px, 55px 54px, 70px 76px; }
+}
+@keyframes lightningPulse {
+  0%, 90%, 100% { opacity: 0; }
+  92% { opacity: .28; }
+  94% { opacity: 0; }
+  95% { opacity: .2; }
+  97% { opacity: 0; }
+}
+
+.weather-scene-clear .scene-sun,
+.weather-scene-partlyCloudy .scene-sun { animation: sunGlow 10s ease-in-out infinite; }
+.weather-scene-clear .scene-rays,
+.weather-scene-partlyCloudy .scene-rays { animation: raysRotate 42s linear infinite; }
+.weather-scene-partlyCloudy .cloud-a,
+.weather-scene-partlyCloudy .cloud-b,
+.weather-scene-cloudy .cloud-a,
+.weather-scene-cloudy .cloud-b,
+.weather-scene-lightRain .cloud-a,
+.weather-scene-lightRain .cloud-b,
+.weather-scene-heavyRain .cloud-a,
+.weather-scene-heavyRain .cloud-b,
+.weather-scene-thunderstorm .cloud-a,
+.weather-scene-thunderstorm .cloud-b,
+.weather-scene-windy .cloud-a,
+.weather-scene-windy .cloud-b { animation: cloudDrift 16s ease-in-out infinite; }
+.weather-scene-lightRain .scene-rain,
+.weather-scene-heavyRain .scene-rain,
+.weather-scene-thunderstorm .scene-rain,
+.weather-scene-heavyRain .scene-rain-heavy,
+.weather-scene-thunderstorm .scene-rain-heavy { animation: rainMove 1.9s linear infinite; }
+.weather-scene-windy .scene-wind { animation: windMove 7s linear infinite; }
+.weather-scene-thunderstorm .scene-lightning { animation: lightningPulse 8s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .weather-scene * {
+    animation: none !important;
+  }
+}
