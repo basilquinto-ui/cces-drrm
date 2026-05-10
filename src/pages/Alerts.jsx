@@ -1,133 +1,119 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
-import { suggestAlertMessage } from '../lib/gemini'
+import { useEffect, useMemo, useState } from 'react'
+import PageHeader from '../components/layout/PageHeader'
 import { useToast } from '../components/Toast'
+import { createAlert, fetchAlerts, updateAlertActive } from '../services/alertManagementService'
 
-const levelClass = { drill: 'alert-drill', watch: 'alert-watch', warning: 'alert-warning', emergency: 'alert-emergency' }
-const hazardIcons = { earthquake: '🌍', typhoon: '🌀', flood: '🌊', fire: '🔥', landslide: '⛰️', general: '⚠️' }
-const levelEmoji = { drill: '🔵', watch: '🟡', warning: '🟠', emergency: '🔴' }
+const LEVEL_LABELS = { drill: 'Drill', watch: 'Watch', warning: 'Warning', emergency: 'Emergency' }
+const ACTIVE_OPTIONS = [{ value: 'all', label: 'All' }, { value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }]
 
-export default function Alerts({ isAdmin, onStatusChange }) {
+const formatLabel = value => {
+  if (!value) return 'Unknown'
+  return value
+    .toString()
+    .replace(/_/g, ' ')
+    .split(' ')
+    .filter(Boolean)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
+
+const formatDateTime = value => {
+  if (!value) return 'Unknown date'
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? 'Unknown date' : date.toLocaleString('en-PH')
+}
+
+export default function Alerts({ isAdmin, user }) {
   const toast = useToast()
-  const [view, setView] = useState('list')
-  const [active, setActive] = useState([])
-  const [history, setHistory] = useState([])
-  const [hazard, setHazard] = useState('earthquake')
-  const [level, setLevel] = useState('drill')
-  const [message, setMessage] = useState('')
-  const [sending, setSending] = useState(false)
-  const [suggesting, setSuggesting] = useState(false)
+  const [alerts, setAlerts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [filters, setFilters] = useState({ activeStatus: 'all', level: 'all', hazardType: 'all', search: '' })
+  const [form, setForm] = useState({ hazard_type: '', level: 'drill', message: '' })
 
-  useEffect(() => { loadAlerts() }, [])
+  const counts = useMemo(() => ({
+    active: alerts.filter(a => a.active).length,
+    inactive: alerts.filter(a => !a.active).length,
+    severe: alerts.filter(a => ['warning', 'emergency'].includes(a.level)).length,
+  }), [alerts])
+
+  const hazardOptions = useMemo(() => ['all', ...new Set(alerts.map(a => a.hazard_type).filter(Boolean))], [alerts])
+
+  useEffect(() => { loadAlerts() }, [filters])
 
   async function loadAlerts() {
-    const { data: activeData } = await supabase.from('alerts').select('*').eq('active', true).order('created_at', { ascending: false })
-    const { data: histData } = await supabase.from('alerts').select('*').eq('active', false).order('created_at', { ascending: false }).limit(10)
-    if (activeData) setActive(activeData)
-    if (histData) setHistory(histData)
+    setLoading(true)
+    setError('')
+    setSuccess('')
+    try { setAlerts(await fetchAlerts(filters)) } catch (e) { setError(e.message || 'Unable to load alerts.') } finally { setLoading(false) }
   }
 
-  async function sendAlert() {
-    if (!message.trim()) { toast('Please enter a message.', 'error'); return }
-    setSending(true)
-    const { error } = await supabase.from('alerts').insert({ hazard_type: hazard, level, message, issued_by: 'DRRM Coordinator', active: true })
-    setSending(false)
-    if (error) { toast('Failed to send alert.', 'error'); return }
-    if (level === 'emergency' || level === 'warning') onStatusChange?.('alert')
-    else if (level === 'watch') onStatusChange?.('watch')
-    toast('🚨 Alert sent!', 'success')
-    setMessage('')
-    setView('list')
-    loadAlerts()
+  async function handleCreate(e) {
+    e.preventDefault()
+    if (!form.hazard_type || !form.level || !form.message.trim()) return
+    setSaving(true)
+    setError('')
+    setSuccess('')
+    const issuedBy = user?.email || 'System User'
+
+    try {
+      await createAlert({ ...form, message: form.message.trim(), issued_by: issuedBy, active: true })
+      setForm({ hazard_type: '', level: 'drill', message: '' })
+      setSuccess('Alert created successfully.')
+      toast('Alert created successfully.', 'success')
+      loadAlerts()
+    } catch (e) {
+      const msg = e.message || 'Unable to create alert.'
+      setError(msg)
+      toast(msg, 'error')
+    } finally { setSaving(false) }
   }
 
-  async function cancelAlert(id) {
-    await supabase.from('alerts').update({ active: false, cancelled_at: new Date().toISOString() }).eq('id', id)
-    toast('Alert cancelled.', 'success')
-    onStatusChange?.('normal')
-    loadAlerts()
+  async function handleToggle(alert) {
+    setError('')
+    setSuccess('')
+    try {
+      await updateAlertActive(alert.id, !alert.active)
+      const msg = `Alert marked as ${alert.active ? 'resolved' : 'active'}.`
+      setSuccess(msg)
+      toast(msg, 'success')
+      loadAlerts()
+    } catch (e) {
+      const msg = e.message || 'Unable to update alert status.'
+      setError(msg)
+      toast(msg, 'error')
+    }
   }
 
-  async function aiSuggest() {
-    setSuggesting(true)
-    const suggestion = await suggestAlertMessage(hazard, level)
-    if (suggestion) setMessage(suggestion.trim())
-    else toast('AI suggestion unavailable. Check your Gemini key.', 'error')
-    setSuggesting(false)
-  }
-
-  if (view === 'send') return (
-    <div className="fade-in">
-      <button className="back-btn" onClick={() => setView('list')}>← Back</button>
-      <div className="card">
-        <h2>🚨 Send Emergency Alert</h2>
-        <div className="form-group">
-          <label className="form-label">Hazard Type</label>
-          <div className="hazard-grid">
-            {Object.entries(hazardIcons).map(([k, v]) => (
-              <div key={k} className={`hazard-option ${hazard === k ? 'active' : ''}`} onClick={() => setHazard(k)}>
-                <div className="ho-icon">{v}</div>
-                <div className="ho-label">{k.charAt(0).toUpperCase() + k.slice(1)}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="form-group">
-          <label className="form-label">Alert Level</label>
-          <select className="form-control" value={level} onChange={e => setLevel(e.target.value)}>
-            <option value="drill">🔵 Drill</option>
-            <option value="watch">🟡 Watch</option>
-            <option value="warning">🟠 Warning</option>
-            <option value="emergency">🔴 Emergency</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label className="form-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
-            Message
-            <button style={{ background: 'none', border: 'none', color: 'var(--gold)', fontWeight: 700, fontSize: 11, cursor: 'pointer' }} onClick={aiSuggest} disabled={suggesting}>
-              {suggesting ? '✨ Thinking...' : '✨ AI Suggest'}
-            </button>
-          </label>
-          <textarea className="form-control" value={message} onChange={e => setMessage(e.target.value)} placeholder="Enter message for all staff..." />
-        </div>
-        <button className="btn btn-danger" onClick={sendAlert} disabled={sending}>{sending ? 'Sending...' : '🚨 Send Alert to All Staff'}</button>
-      </div>
+  return <div className="fade-in">
+    <PageHeader title="Alert Management" description="Create, monitor, and resolve portal alerts." />
+    <div className="dashboard-grid">
+      <section className="portal-card"><h3>Active Alerts</h3><p className="status-badge">{counts.active}</p></section>
+      <section className="portal-card"><h3>Resolved Alerts</h3><p className="status-badge">{counts.inactive}</p></section>
+      <section className="portal-card"><h3>Warning/Emergency</h3><p className="status-badge">{counts.severe}</p></section>
     </div>
-  )
 
-  return (
-    <div className="fade-in">
-      {isAdmin && <button className="btn btn-danger" style={{ marginBottom: 14 }} onClick={() => setView('send')}>🚨 Send Emergency Alert</button>}
-      <div className="section-header"><span className="section-title">Active Alerts</span></div>
-      {active.length === 0
-        ? <div className="empty-state"><div className="empty-icon">✅</div><p>No active alerts</p></div>
-        : active.map(a => (
-          <div key={a.id} className={`alert-item ${levelClass[a.level]}`}>
-            <h4>{hazardIcons[a.hazard_type]} {a.hazard_type.charAt(0).toUpperCase() + a.hazard_type.slice(1)} {levelEmoji[a.level]} {a.level.toUpperCase()}</h4>
-            <p>{a.message}</p>
-            <div className="alert-meta">
-              <span>📅 {new Date(a.created_at).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
-              <span>👤 {a.issued_by}</span>
-              <span style={{ color: 'var(--red)' }}>● Active</span>
-            </div>
-            {isAdmin && <button className="btn btn-outline btn-sm" style={{ marginTop: 10 }} onClick={() => cancelAlert(a.id)}>✕ Cancel Alert</button>}
-          </div>
-        ))}
+    {isAdmin && <section className="portal-card" style={{ marginTop: 14 }}><h3>Create Alert</h3><form onSubmit={handleCreate}>
+      <div className="form-group"><label>Hazard Type</label><input className="form-control" value={form.hazard_type} onChange={e => setForm({ ...form, hazard_type: e.target.value })} placeholder="e.g. flood" required /></div>
+      <div className="form-group"><label>Level</label><select className="form-control" value={form.level} onChange={e => setForm({ ...form, level: e.target.value })}>{Object.entries(LEVEL_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
+      <div className="form-group"><label>Message</label><textarea className="form-control" value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} required /></div>
+      <button className="btn" type="submit" disabled={saving}>{saving ? 'Saving...' : 'Create Alert'}</button>
+    </form></section>}
 
-      <div className="section-header" style={{ marginTop: 16 }}><span className="section-title">Alert History</span></div>
-      {history.length === 0
-        ? <div className="empty-state"><div className="empty-icon">📋</div><p>No alert history yet</p></div>
-        : history.map(a => (
-          <div key={a.id} className={`alert-item ${levelClass[a.level]}`}>
-            <h4>{hazardIcons[a.hazard_type]} {a.hazard_type.charAt(0).toUpperCase() + a.hazard_type.slice(1)} {levelEmoji[a.level]} {a.level.toUpperCase()}</h4>
-            <p>{a.message}</p>
-            <div className="alert-meta">
-              <span>📅 {new Date(a.created_at).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
-              <span>👤 {a.issued_by}</span>
-              <span style={{ color: 'var(--green)' }}>✓ Resolved</span>
-            </div>
-          </div>
-        ))}
-    </div>
-  )
+    <section className="portal-card" style={{ marginTop: 14 }}><h3>Filters</h3><div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
+      <div className="form-group"><label>Status</label><select className="form-control" value={filters.activeStatus} onChange={e => setFilters({ ...filters, activeStatus: e.target.value })}>{ACTIVE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}</select></div>
+      <div className="form-group"><label>Level</label><select className="form-control" value={filters.level} onChange={e => setFilters({ ...filters, level: e.target.value })}><option value="all">All</option>{Object.entries(LEVEL_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></div>
+      <div className="form-group"><label>Hazard Type</label><select className="form-control" value={filters.hazardType} onChange={e => setFilters({ ...filters, hazardType: e.target.value })}>{hazardOptions.map(h => <option key={h} value={h}>{h === 'all' ? 'All' : formatLabel(h)}</option>)}</select></div>
+      <div className="form-group"><label>Search</label><input className="form-control" value={filters.search} onChange={e => setFilters({ ...filters, search: e.target.value })} placeholder="Message or issuer" /></div>
+    </div></section>
+
+    {loading && <section className="portal-card" style={{ marginTop: 14 }}><p>Loading alerts...</p></section>}
+    {!loading && error && <section className="portal-card" style={{ marginTop: 14 }}><p>{error}</p></section>}
+    {!loading && !error && success && <section className="portal-card" style={{ marginTop: 14 }}><p>{success}</p></section>}
+    {!loading && !error && <section className="portal-card" style={{ marginTop: 14 }}>{alerts.length === 0 ? <p>No alerts match the current filters.</p> : <div className="monitor-table-wrap"><table className="monitor-table"><thead><tr><th>Created</th><th>Hazard Type</th><th>Level</th><th>Message</th><th>Issued By</th><th>Status</th>{isAdmin && <th>Action</th>}</tr></thead><tbody>
+      {alerts.map(a => <tr key={a.id}><td>{formatDateTime(a.created_at)}</td><td>{formatLabel(a.hazard_type)}</td><td><span className="badge">{LEVEL_LABELS[a.level] || formatLabel(a.level)}</span></td><td>{a.message}</td><td>{a.issued_by}</td><td><span className={`status-badge status-${a.active ? 'alert' : 'normal'}`}>{a.active ? 'Active' : 'Resolved'}</span></td>{isAdmin && <td><button className="btn btn-outline btn-sm" onClick={() => handleToggle(a)}>{a.active ? 'Mark Resolved' : 'Mark Active'}</button></td>}</tr>)}
+    </tbody></table></div>}</section>}
+  </div>
 }

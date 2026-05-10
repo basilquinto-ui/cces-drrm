@@ -51,7 +51,7 @@ export default function App() {
   const sharedProps = { user, role, isAdmin, signOut, onStatusChange: setStatus, onSignalChange: setSignal }
   const pages = {
     dashboard: <Dashboard weather={weather} signal={signal} status={status} />,
-    alerts: <Alerts isAdmin={isAdmin} onStatusChange={setStatus} />,
+    alerts: <Alerts isAdmin={isAdmin} user={user} onStatusChange={setStatus} />,
     incidents: <Incidents isAdmin={isAdmin} />,
     checkin: <CheckIn isAdmin={isAdmin} />,
     resources: <Resources {...sharedProps} />,
