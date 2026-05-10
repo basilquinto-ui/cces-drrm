@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { createOfficialAdvisory, fetchActiveOfficialAdvisories, resolveOfficialAdvisory } from '../../services/officialAdvisoryService'
+import { fetchActiveOfficialAdvisories, resolveOfficialAdvisory } from '../../services/officialAdvisoryService'
 
 function formatDateTime(value) {
   if (!value) return 'N/A'
@@ -10,30 +10,33 @@ function formatDateTime(value) {
 export default function OfficialAdvisoryPanel({ isAdmin = false }) {
   const [advisories, setAdvisories] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   async function load() {
     setLoading(true)
-    try { setAdvisories(await fetchActiveOfficialAdvisories()) } finally { setLoading(false) }
+    setError('')
+    try {
+      setAdvisories(await fetchActiveOfficialAdvisories())
+    } catch (loadError) {
+      console.error('Failed to load official advisories:', loadError)
+      setAdvisories([])
+      setError('Unable to load advisories.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { load() }, [])
-
-  async function handleAddSample() {
-    await createOfficialAdvisory({
-      advisory_type: 'general_weather', warning_level: 'monitoring', source: 'manual',
-      title: 'Monitoring advisory', message: 'Manual entry for Quezon City / nearby monitoring.',
-      relevance_scope: 'quezon_city', is_relevant_to_school: true,
-    })
-    await load()
-  }
 
   return (
     <section className="portal-card" style={{ marginTop: 14 }}>
       <h3>Official Advisories</h3>
       <p style={{ color: '#60758f' }}>Quezon City / nearby monitoring</p>
       <p style={{ color: '#60758f' }}>Displayed advisories support school monitoring. Follow official PAGASA, PHIVOLCS, LGU, and school DRRM instructions.</p>
-      {isAdmin ? <div style={{ margin: '8px 0' }}><button className="btn btn-outline btn-sm" onClick={handleAddSample}>Create advisory</button></div> : null}
-      {loading ? <p>Loading advisories...</p> : advisories.length === 0 ? <p>No active relevant advisories.</p> : advisories.map(item => (
+      {isAdmin ? <p style={{ color: '#60758f', marginTop: 8 }}>Manual entry controls will be added in a follow-up PR.</p> : null}
+      {loading ? <p>Loading advisories...</p> : null}
+      {!loading && error ? <p>{error}</p> : null}
+      {!loading && !error && (advisories.length === 0 ? <p>No active relevant advisories.</p> : advisories.map(item => (
         <div key={item.id} style={{ padding: '10px 0', borderBottom: '1px solid var(--line)' }}>
           <p><span className="status-badge">{item.source}</span> <span className="status-badge">{item.warning_level}</span></p>
           <p><strong>{item.title}</strong></p><p>{item.message}</p>
@@ -42,7 +45,7 @@ export default function OfficialAdvisoryPanel({ isAdmin = false }) {
           {item.source_url ? <p><a href={item.source_url} target="_blank" rel="noreferrer">Source link</a></p> : null}
           {isAdmin ? <button className="btn btn-outline btn-sm" onClick={() => resolveOfficialAdvisory(item.id).then(load)}>Resolve</button> : null}
         </div>
-      ))}
+      )))}
       {/* TODO: Future Supabase Edge Function or Vercel Cron can sync PAGASA/PHIVOLCS feeds into these tables after official/stable endpoints are verified. */}
     </section>
   )
