@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import WeatherCard from '../components/WeatherCard'
 
 const riskClasses = { high: 'risk-high', moderate: 'risk-moderate', low: 'risk-low', safe: 'risk-safe' }
 const riskLabels = { high: '🔴 High Risk', moderate: '🟡 Moderate', low: '🟢 Low Risk', safe: '🔵 Assembly' }
@@ -90,8 +89,19 @@ export default function Home({ weather, signal, onSignalChange, onTabChange, sta
         <div className="status-info"><h2>{statusCfg.h}</h2><p>{statusCfg.p}</p></div>
       </div>
 
-      {/* Weather */}
-      <WeatherCard weather={weather} signal={signal} onSignalChange={onSignalChange} />
+      {/* Weather Summary */}
+      <div className="card">
+        <div className="section-header">
+          <span className="section-title">Weather Summary</span>
+          <button className="see-all" onClick={() => onTabChange('weatherRisk')}>View Weather / Risk →</button>
+        </div>
+        <p><strong>Condition:</strong> {weather?.description || weather?.condition || 'Not available'}</p>
+        <p><strong>Temperature:</strong> {weather?.temp ?? 'N/A'}°C</p>
+        <p><strong>Wind:</strong> {weather?.windKph ?? 'N/A'} kph</p>
+        <p><strong>Rain Chance:</strong> {weather?.rainChance ?? 'N/A'}%</p>
+        <p><strong>Risk:</strong> <span className={`status-badge status-${weather?.riskLevel || 'moderate'}`}>{(weather?.riskLevel || 'moderate').toUpperCase()}</span></p>
+        <p>{weather?.recommendedAction || 'Continue monitoring official weather and DRRM advisories.'}</p>
+      </div>
 
       {/* Stats */}
       <div className="stats-row">
