@@ -55,6 +55,7 @@ export async function fetchCheckinMonitorSummary() {
 
   let staffRoster = null
   let staffRosterAvailable = false
+  // Staff roster fields may be restricted by RLS/schema; failure should not block submitted check-ins.
   try {
     staffRoster = await fetchStaffRoster()
     staffRosterAvailable = true
@@ -73,7 +74,10 @@ export async function fetchCheckinMonitorSummary() {
   })
 
   const statusCounts = buildStatusCounts(checkinsToday)
-  const notCheckedInCount = staffRosterAvailable ? Math.max(staffRoster.length - checkinsToday.length, 0) : null
+  const checkedStaffIds = new Set(checkinsToday.map((item) => item.staff_id).filter(Boolean))
+  const notCheckedInCount = staffRosterAvailable
+    ? Math.max(staffRoster.length - checkedStaffIds.size, 0)
+    : null
 
   return {
     dateKey,

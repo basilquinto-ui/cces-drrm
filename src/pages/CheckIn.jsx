@@ -14,14 +14,14 @@ function formatDateLabel(dateKey) {
   const date = dateKey ? new Date(`${dateKey}T00:00:00`) : new Date()
   return Number.isNaN(date.getTime())
     ? 'Today'
-    : date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+    : date.toLocaleDateString('en-PH', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
 }
 
 function formatTime(value) {
   if (!value) return '—'
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return '—'
-  return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  return date.toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit' })
 }
 
 function statusLabel(status) {
