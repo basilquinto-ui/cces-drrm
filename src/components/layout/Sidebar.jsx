@@ -1,10 +1,11 @@
 import {
-  DashboardIcon, AlertIcon, IncidentIcon, CheckInIcon, ResourceIcon,
+  DashboardIcon, WeatherRiskIcon, AlertIcon, IncidentIcon, CheckInIcon, ResourceIcon,
   RouteIcon, DrillIcon, AdminIcon, SettingsIcon
 } from '../icons/PortalIcons'
 
 const navItems = [
   { key: 'dashboard', label: 'Dashboard', icon: DashboardIcon },
+  { key: 'weatherRisk', label: 'Weather / Risk', icon: WeatherRiskIcon },
   { key: 'alerts', label: 'Alerts', icon: AlertIcon },
   { key: 'incidents', label: 'Incidents', icon: IncidentIcon },
   { key: 'checkin', label: 'Check-ins', icon: CheckInIcon },

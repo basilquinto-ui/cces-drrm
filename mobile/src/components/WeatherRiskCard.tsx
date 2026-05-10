@@ -1,56 +1,88 @@
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Activity, CloudSun, Droplets, Radio, Wind } from 'lucide-react-native';
 import { AppCard } from '@/components/AppCard';
+import { ErrorState } from '@/components/ErrorState';
+import { LoadingState } from '@/components/LoadingState';
 import { SectionHeader } from '@/components/SectionHeader';
+import { StatusBadge } from '@/components/StatusBadge';
 import { theme } from '@/constants/theme';
+import { fetchWeatherRisk, type WeatherRiskData } from '@/services/weatherRisk';
 
-const weatherSnapshot = {
-  condition: 'Monitoring',
-  temperature: '--',
-  humidity: '--',
-  wind: '--',
-  typhoonSignal: 'No Typhoon Signal',
-  seismicRisk: 'Monitoring',
-};
+function formatDateTime(value?: string | null): string {
+  if (!value) return 'Unknown date';
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return 'Unknown date';
+  return parsed.toLocaleString('en-PH');
+}
 
-// Placeholder snapshot only. Live weather and risk integration will be connected in a future update.
+function getRiskTone(riskLevel?: string) {
+  if (riskLevel === 'high') return 'danger';
+  if (riskLevel === 'moderate') return 'warning';
+  if (riskLevel === 'low') return 'success';
+  return 'info';
+}
+
 export function WeatherRiskCard() {
+  const [data, setData] = useState<WeatherRiskData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadWeatherRisk = async () => {
+      setLoading(true);
+      setError('');
+
+      try {
+        const result = await fetchWeatherRisk();
+        if (mounted) setData(result);
+      } catch {
+        if (mounted) setError('Unable to load weather monitoring data.');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    loadWeatherRisk();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <View>
       <SectionHeader title="Weather and Risk" subtitle="Daily environmental status" />
       <AppCard>
-        <View style={styles.headerRow}>
-          <CloudSun size={20} color={theme.colors.info} strokeWidth={2.1} />
-          <Text style={styles.conditionText}>{weatherSnapshot.condition}</Text>
-        </View>
-        <View style={styles.metricsGrid}>
-          <View style={styles.metricItem}><Text style={styles.metricLabel}>Temperature</Text><Text style={styles.metricValue}>{weatherSnapshot.temperature}</Text></View>
-          <View style={styles.metricItem}><Droplets size={14} color={theme.colors.primary} strokeWidth={2.1} /><Text style={styles.metricLabel}>Humidity</Text><Text style={styles.metricValue}>{weatherSnapshot.humidity}</Text></View>
-          <View style={styles.metricItem}><Wind size={14} color={theme.colors.primary} strokeWidth={2.1} /><Text style={styles.metricLabel}>Wind</Text><Text style={styles.metricValue}>{weatherSnapshot.wind}</Text></View>
-        </View>
-        <View style={styles.statusRow}>
-          <Radio size={16} color={theme.colors.warning} strokeWidth={2.1} />
-          <Text style={styles.statusLabel}>Typhoon Signal</Text>
-          <Text style={styles.statusValue}>{weatherSnapshot.typhoonSignal}</Text>
-        </View>
-        <View style={styles.statusRow}>
-          <Activity size={16} color={theme.colors.danger} strokeWidth={2.1} />
-          <Text style={styles.statusLabel}>Seismic Risk</Text>
-          <Text style={styles.statusValue}>{weatherSnapshot.seismicRisk}</Text>
-        </View>
+        {loading ? <LoadingState message="Loading weather risk..." /> : null}
+        {!loading && error ? <ErrorState message={error} /> : null}
+        {!loading && !error && data ? (
+          <>
+            <Text style={styles.value}>{data.condition}</Text>
+            <Text style={styles.meta}>
+              Temp: {data.temp ?? 'N/A'}°C · Wind: {data.windKph ?? 'N/A'} kph · Rain: {data.rainChance ?? 'N/A'}%
+            </Text>
+            <View style={styles.badgeRow}>
+              <StatusBadge
+                label={`Risk: ${data.riskLevel.toUpperCase()}`}
+                tone={getRiskTone(data.riskLevel)}
+              />
+            </View>
+            <Text style={styles.meta}>Action: {data.recommendedAction}</Text>
+            <Text style={styles.meta}>Last updated: {formatDateTime(data.lastUpdated)}</Text>
+            <Text style={styles.note}>
+              Weather data supports monitoring only. Follow official PAGASA and school DRRM advisories for decisions.
+            </Text>
+          </>
+        ) : null}
       </AppCard>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  headerRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
-  conditionText: { color: theme.colors.text, fontSize: 16, fontWeight: '700' },
-  metricsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 10 },
-  metricItem: { minWidth: 90, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.sm, paddingVertical: 8, paddingHorizontal: 10, backgroundColor: theme.colors.surface, flexDirection: 'row', alignItems: 'center', gap: 6 },
-  metricLabel: { color: theme.colors.muted, fontSize: 12, fontWeight: '600' },
-  metricValue: { color: theme.colors.text, fontSize: 13, fontWeight: '700' },
-  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingVertical: 6 },
-  statusLabel: { color: theme.colors.muted, fontSize: 12, fontWeight: '600' },
-  statusValue: { color: theme.colors.text, fontSize: 13, fontWeight: '700' },
+  value: { color: theme.colors.text, fontSize: 16, fontWeight: '700' },
+  meta: { color: theme.colors.muted, fontSize: 12, marginTop: 8 },
+  badgeRow: { marginTop: 10 },
+  note: { color: theme.colors.muted, fontSize: 11, marginTop: 10 },
 });

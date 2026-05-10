@@ -6,6 +6,7 @@ import Alerts from './pages/Alerts'
 import Incidents from './pages/Incidents'
 import CheckIn from './pages/CheckIn'
 import Dashboard from './pages/Dashboard'
+import WeatherRisk from './pages/WeatherRisk'
 import Resources from './pages/Resources'
 import EvacuationRoutes from './pages/EvacuationRoutes'
 import Drills from './pages/Drills'
@@ -52,6 +53,7 @@ export default function App() {
   const sharedProps = { user, role, isAdmin, signOut, onStatusChange: setStatus, onSignalChange: setSignal }
   const pages = {
     dashboard: <Dashboard weather={weather} signal={signal} status={status} />,
+    weatherRisk: <WeatherRisk weather={weather} signal={signal} status={status} onRefreshWeather={loadWeather} />,
     alerts: <Alerts isAdmin={isAdmin} user={user} onStatusChange={setStatus} />,
     incidents: <Incidents isAdmin={isAdmin} />,
     checkin: <CheckIn isAdmin={isAdmin} />,

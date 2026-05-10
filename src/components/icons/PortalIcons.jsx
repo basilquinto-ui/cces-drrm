@@ -10,3 +10,5 @@ export const DrillIcon = () => <I><path d="M14 13a2 2 0 0 0-2-2h0a2 2 0 0 0-2 2v
 export const AdminIcon = () => <I><circle cx="12" cy="8" r="4" /><path d="M6 20a6 6 0 0 1 12 0" /></I>
 export const SettingsIcon = () => <I><circle cx="12" cy="12" r="3" /><path d="M19 12h2M3 12h2M12 3v2M12 19v2M18.4 5.6l-1.4 1.4M7 17l-1.4 1.4M5.6 5.6 7 7M17 17l1.4 1.4" /></I>
 export const MenuIcon = () => <I><path d="M3 6h18" /><path d="M3 12h18" /><path d="M3 18h18" /></I>
+
+export const WeatherRiskIcon = () => <I><path d="M6 15a4 4 0 1 1 1-7.9A5 5 0 0 1 17.5 9" /><path d="M8 19h8" /><path d="M12 13v6" /></I>

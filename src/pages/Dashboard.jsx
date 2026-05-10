@@ -67,8 +67,10 @@ export default function Dashboard({ weather, signal, status }) {
 
         <section className="portal-card">
           <h3>Weather / Risk Summary</h3>
-          <p>{safeWeather}</p>
-          <p>Keep monitoring official advisories for sudden changes.</p>
+          <p><strong>{safeWeather}</strong></p>
+          <p>Temp: {weather?.temp ?? 'N/A'}°C · Wind: {weather?.windKph ?? 'N/A'} kph · Rain: {weather?.rainChance ?? 'N/A'}%</p>
+          <p>Risk: <span className={`status-badge status-${weather?.riskLevel || 'moderate'}`}>{(weather?.riskLevel || 'moderate').toUpperCase()}</span></p>
+          <p>{weather?.recommendedAction || 'Keep monitoring official advisories for sudden changes.'}</p>
         </section>
 
         <section className="portal-card">
