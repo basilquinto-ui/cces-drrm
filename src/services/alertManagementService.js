@@ -3,14 +3,13 @@ import { supabase } from '../lib/supabase'
 const TABLE = 'alerts'
 
 const applyFilters = (query, filters = {}) => {
-  const { activeStatus = 'all', level = 'all', hazardType = 'all', search = '' } = filters
+  const { activeStatus = 'all', level = 'all', hazardType = 'all' } = filters
   let next = query
 
   if (activeStatus === 'active') next = next.eq('active', true)
   if (activeStatus === 'inactive') next = next.eq('active', false)
   if (level !== 'all') next = next.eq('level', level)
   if (hazardType !== 'all') next = next.eq('hazard_type', hazardType)
-  if (search.trim()) next = next.or(`message.ilike.%${search.trim()}%,issued_by.ilike.%${search.trim()}%`)
 
   return next
 }
@@ -25,7 +24,16 @@ export async function fetchAlerts(filters = {}) {
 
   const { data, error } = await query
   if (error) throw error
-  return data || []
+
+  const rows = data || []
+  const search = (filters.search || '').trim().toLowerCase()
+  if (!search) return rows
+
+  return rows.filter(row => {
+    const message = (row.message || '').toLowerCase()
+    const issuedBy = (row.issued_by || '').toLowerCase()
+    return message.includes(search) || issuedBy.includes(search)
+  })
 }
 
 export async function createAlert(payload) {
