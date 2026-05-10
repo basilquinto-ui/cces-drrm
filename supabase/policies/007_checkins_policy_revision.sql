@@ -26,7 +26,8 @@ begin
 end
 $$;
 
--- Drop existing/legacy checkins policies before creating revised policies.
+-- Drop legacy checkins policies from 004_checkins.sql (and current names)
+-- before creating revised policies to avoid duplicate permissive policies.
 drop policy if exists checkins_select_staff_own on public.checkins;
 drop policy if exists checkins_select_admin_all on public.checkins;
 drop policy if exists checkins_insert_staff_own on public.checkins;
