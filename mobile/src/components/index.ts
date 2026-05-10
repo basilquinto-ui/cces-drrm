@@ -15,3 +15,5 @@ export * from './DashboardQuickActions';
 export * from './RecentIncidentsPreview';
 
 export * from './RoleGate';
+
+export * from './AccountStatusCard';
