@@ -1,4 +1,5 @@
 import PageHeader from '../components/layout/PageHeader'
+import WeatherScene from '../components/WeatherScene'
 
 const toRiskLevel = (risk) => {
   const value = String(risk || 'moderate').toLowerCase()
@@ -60,6 +61,7 @@ export default function WeatherRisk({ weather, signal, status, onRefreshWeather 
 
       <section className="portal-card weather-hero">
         <div>
+          <WeatherScene weather={data} />
           <p className="weather-hero-label">Current Condition</p>
           <h3>{data.condition || 'Unavailable'}</h3>
           <p className="weather-hero-temp">{data.temp ?? 'N/A'}°C</p>
