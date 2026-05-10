@@ -330,3 +330,11 @@ All above are **non-destructive when implemented carefully**, but each changes b
 - Newer checkins revision uses `SELECT` wrappers for helper/auth calls, which aligns with Supabase RLS performance recommendations.
 - Duplicate permissive policy risk is actively mitigated in `007_checkins_policy_revision.sql` via explicit `DROP POLICY IF EXISTS` before re-creation.
 
+
+## Follow-up status
+
+Critical RLS hardening for `staff`, `resources`, `drills`, and `evacuation_routes` is addressed by:
+- `supabase/policies/008_operational_tables_rls_preflight.sql`
+- `supabase/policies/008_operational_tables_rls_hardening.sql`
+
+These migrations must be applied manually in the Supabase SQL Editor after preflight review.
