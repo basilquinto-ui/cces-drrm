@@ -78,7 +78,10 @@ export default function Incidents({ isAdmin }) {
 
   return (
     <section>
-      <PageHeader title="Incident Management" description="Review, filter, and manage reports submitted from the field." />
+      <PageHeader
+        title="Incident Management"
+        description="Review, filter, and manage reports submitted from the field."
+      />
       <div className="dashboard-grid">
         <div className="portal-card"><h3>Total Incidents</h3><p className="status-badge">{totalCount}</p></div>
         <div className="portal-card"><h3>Open Incidents</h3><p className="status-badge">{openCount}</p></div>
