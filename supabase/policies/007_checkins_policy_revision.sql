@@ -2,29 +2,9 @@ begin;
 
 alter table if exists public.checkins enable row level security;
 
--- Remove only clearly duplicate index name, and only if both objects exist.
-do $$
-begin
-  if exists (
-    select 1
-    from pg_class c
-    join pg_namespace n on n.oid = c.relnamespace
-    where n.nspname = 'public'
-      and c.relname = 'checkins_staff_date_unique'
-      and c.relkind = 'i'
-  )
-  and exists (
-    select 1
-    from information_schema.table_constraints tc
-    where tc.table_schema = 'public'
-      and tc.table_name = 'checkins'
-      and tc.constraint_name = 'checkins_staff_id_date_key'
-      and tc.constraint_type = 'UNIQUE'
-  ) then
-    execute 'drop index if exists public.checkins_staff_date_unique';
-  end if;
-end
-$$;
+-- NOTE: Constraint-backed indexes (e.g., checkins_staff_date_unique) must not be
+-- dropped in this RLS migration. Duplicate-index cleanup is deferred to a dedicated
+-- schema migration so this file only revises checkins RLS policies.
 
 -- 004_checkins.sql policy names are covered by the DROP POLICY IF EXISTS block below.
 -- Drop legacy checkins policies from 004_checkins.sql (and current names)
