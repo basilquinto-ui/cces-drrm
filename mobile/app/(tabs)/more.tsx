@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import {
@@ -5,6 +6,7 @@ import {
   AppButton,
   AppCard,
   BrandMark,
+  ErrorState,
   Screen,
   SectionHeader,
 } from '@/components';
@@ -17,24 +19,31 @@ import { signOut } from '@/services/auth';
 
 export default function MoreScreen() {
   const { profile, user } = useSession();
-  const canUseAdminTools = profile?.active !== false && profile?.role === 'admin';
+  const [signOutError, setSignOutError] = useState('');
+  const canUseAdminTools = !!profile && profile.active !== false && profile.role === 'admin';
 
   const onSignOut = async () => {
-    await signOut();
-    router.replace('/login');
+    setSignOutError('');
+    try {
+      await signOut();
+      router.replace('/login');
+    } catch (error) {
+      setSignOutError(error instanceof Error ? error.message : 'Sign out failed. Please try again.');
+    }
   };
 
   return (
     <Screen>
       <SectionHeader title="Operations Resources" subtitle="Contacts and preparedness references" />
       <AccountStatusCard email={user?.email ?? null} profile={profile} />
+      {signOutError ? <ErrorState message={signOutError} /> : null}
       <AppButton title="Sign Out" onPress={onSignOut} />
 
       {canUseAdminTools ? (
         <AppCard>
           <Text style={styles.cardTitle}>Admin Tools</Text>
-          <Text style={styles.cardSub}>View Alerts</Text>
-          <Text style={styles.cardSub}>Report Incident</Text>
+          <AppButton title="View Alerts" onPress={() => router.push('/(tabs)/alerts')} />
+          <AppButton title="Report Incident" onPress={() => router.push('/(tabs)/incidents')} />
           <Text style={styles.cardSub}>Check-In Monitor (coming soon)</Text>
           <Text style={styles.portalNote}>Full administration is available in the web portal.</Text>
         </AppCard>
