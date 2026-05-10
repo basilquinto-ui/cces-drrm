@@ -506,3 +506,5 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 .public-contact-card a { color: var(--navy); font-weight: 700; text-decoration: none; margin-right: 10px; font-size: 0.9rem; }
 .public-footer { background: #0f1f38; color: #dbe5f3; padding: 20px 16px; text-align: center; }
 .public-footer a { color: #fff; }
+
+.public-location-placeholder { color: var(--text-muted); font-size: 0.9rem; font-weight: 700; }
