@@ -1,20 +1,11 @@
 import { useEffect, useState } from 'react'
+import DashboardRecentIncidents from '../components/dashboard/DashboardRecentIncidents'
+import DashboardSafetySummary from '../components/dashboard/DashboardSafetySummary'
+import DashboardStats from '../components/dashboard/DashboardStats'
+import DashboardStatusSummary from '../components/dashboard/DashboardStatusSummary'
+import DashboardWeatherSummary from '../components/dashboard/DashboardWeatherSummary'
 import PageHeader from '../components/layout/PageHeader'
 import { fetchDashboardSummary } from '../services/dashboardService'
-
-function formatLabel(value) {
-  if (!value || typeof value !== 'string') return 'Unknown'
-  return value
-    .replace(/_/g, ' ')
-    .toLowerCase()
-    .replace(/\b\w/g, char => char.toUpperCase())
-}
-
-function formatDateTime(value) {
-  if (!value) return 'Unknown date'
-  const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? 'Unknown date' : date.toLocaleString('en-PH')
-}
 
 export default function Dashboard({ weather, signal, status }) {
   const [loading, setLoading] = useState(true)
@@ -26,8 +17,6 @@ export default function Dashboard({ weather, signal, status }) {
     resolvedIncidentsTodayCount: 0,
     recentIncidents: [],
   })
-
-  const safeWeather = weather?.condition || 'No weather data loaded yet.'
 
   useEffect(() => {
     let isMounted = true
@@ -59,64 +48,13 @@ export default function Dashboard({ weather, signal, status }) {
       {!loading && error && <section className="portal-card"><p>Unable to load dashboard metrics: {error}</p></section>}
 
       <div className="dashboard-grid">
-        <section className="portal-card">
-          <h3>School Safety Status</h3>
-          <p className={`status-badge status-${status}`}>{status?.toUpperCase() || 'NORMAL'}</p>
-          <p>Current signal level: {signal}</p>
-        </section>
-
-        <section className="portal-card">
-          <h3>Weather / Risk Summary</h3>
-          <p><strong>{safeWeather}</strong></p>
-          <p>Temp: {weather?.temp ?? 'N/A'}°C · Wind: {weather?.windKph ?? 'N/A'} kph · Rain: {weather?.rainChance ?? 'N/A'}%</p>
-          <p>Risk: <span className={`status-badge status-${weather?.riskLevel || 'moderate'}`}>{(weather?.riskLevel || 'moderate').toUpperCase()}</span></p>
-          <p>{weather?.recommendedAction || 'Keep monitoring official advisories for sudden changes.'}</p>
-        </section>
-
-        <section className="portal-card">
-          <h3>Active Alerts</h3>
-          <p className="status-badge">{summary.activeAlertsCount}</p>
-        </section>
-
-        <section className="portal-card">
-          <h3>Open Incidents</h3>
-          <p className="status-badge">{summary.openIncidentsCount}</p>
-        </section>
-
-        <section className="portal-card">
-          <h3>Staff Check-ins Today</h3>
-          <p className="status-badge">{summary.staffCheckinsTodayCount}</p>
-        </section>
-
-        <section className="portal-card">
-          <h3>Resolved Today</h3>
-          <p className="status-badge">{summary.resolvedIncidentsTodayCount}</p>
-        </section>
-
-        <section className="portal-card">
-          <h3>Daily Hazard Map</h3>
-          <p>Campus map is on static daily summary mode.</p>
-          <p>Review evacuation routes and watch zones before class starts.</p>
-        </section>
+        <DashboardStatusSummary status={status} signal={signal} />
+        <DashboardWeatherSummary weather={weather} />
+        <DashboardStats summary={summary} />
+        <DashboardSafetySummary />
       </div>
 
-      <section className="portal-card" style={{ marginTop: 16 }}>
-        <h3>Recent Incidents</h3>
-        {summary.recentIncidents.length === 0 ? (
-          <p>No recent incidents recorded.</p>
-        ) : (
-          summary.recentIncidents.map((incident) => (
-            <div key={incident.id} style={{ padding: '10px 0', borderBottom: '1px solid var(--line)' }}>
-              <p><strong>Hazard:</strong> {formatLabel(incident.hazard_type)}</p>
-              <p><strong>Location:</strong> {incident.location || 'Unknown'}</p>
-              <p><strong>Severity:</strong> {formatLabel(incident.severity)}</p>
-              <p><strong>Status:</strong> {formatLabel(incident.status)}</p>
-              <p><strong>Date:</strong> {formatDateTime(incident.created_at)}</p>
-              <p><strong>Reported by:</strong> {incident.reported_by || 'Unknown'}</p>
-            </div>
-          ))
-        )}
-      </section>
+      <DashboardRecentIncidents incidents={summary.recentIncidents} />
     </div>
   )
 }
