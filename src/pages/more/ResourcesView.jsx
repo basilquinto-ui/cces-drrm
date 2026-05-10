@@ -27,7 +27,7 @@ export default function ResourcesView({ resources, isAdmin, editRes, resourceFor
       {Object.entries(grouped).map(([category, items]) => (
         <div key={category} className="card">
           <div className="card-title">
-            {CAT_ICONS[category]} {category.charAt(0).toUpperCase() + category.slice(1)}
+            {CAT_ICONS[category]}
           </div>
 
           {items.map((resource) => (
