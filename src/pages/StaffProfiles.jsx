@@ -67,14 +67,14 @@ export default function StaffProfiles({ isAdmin }) {
           {profiles.length === 0 ? <p>No profiles found.</p> : (
             <div className="monitor-table-wrap">
               <table className="monitor-table">
-                <thead><tr><th>Full Name</th><th>Email</th><th>Role</th><th>Staff ID</th><th>Active</th><th>Link</th>{isAdmin && <th>Actions</th>}</tr></thead>
+                <thead><tr><th>Full Name</th><th>Role</th><th>Staff ID</th><th>Active</th><th>Link</th>{isAdmin && <th>Actions</th>}</tr></thead>
                 <tbody>
                   {profiles.map((profile) => {
                     const linked = !!profile.staff_id
                     return (
                       <tr key={profile.id}>
                         <td>{profile.full_name || '—'}</td>
-                        <td>{profile.email || '—'}</td>
+                        
                         <td>{isAdmin ? <select className="form-control" value={profile.role || 'viewer'} disabled={savingId === profile.id} onChange={(e) => save(profile.id, () => updateProfileRole(profile.id, e.target.value))}>{ROLE_OPTIONS.map((opt) => <option key={opt} value={opt}>{opt}</option>)}</select> : <span className="badge">{profile.role || 'viewer'}</span>}</td>
                         <td>{isAdmin ? <input className="form-control" list="staff-options" value={staffDrafts[profile.id] ?? ''} disabled={savingId === profile.id} onChange={(e) => setStaffDrafts((prev) => ({ ...prev, [profile.id]: e.target.value }))} /> : (profile.staff_id || '—')}</td>
                         <td>{isAdmin ? <button className="btn btn-outline btn-sm" disabled={savingId === profile.id} onClick={() => save(profile.id, () => updateProfileActive(profile.id, profile.active === false))}>{profile.active === false ? 'Set Active' : 'Set Inactive'}</button> : <span className={`status-badge status-${profile.active === false ? 'alert' : 'normal'}`}>{profile.active === false ? 'Inactive' : 'Active'}</span>}</td>

@@ -1,23 +1,13 @@
 import { supabase } from '../lib/supabase'
 
-const PROFILE_FIELDS = 'id, full_name, role, staff_id, active, email'
-const STAFF_ROLE_FIELDS = ['id, full_name, role, active', 'id, name, role, active', 'id, full_name', 'id, name']
+const PROFILE_FIELDS = 'id, full_name, role, staff_id, active'
+const STAFF_FIELD_CANDIDATES = ['id, name, role, active', 'id, full_name, role, active', 'id, name', 'id, full_name']
 
 export async function fetchProfiles() {
-  const { data, error } = await supabase
+  return supabase
     .from('profiles')
     .select(PROFILE_FIELDS)
     .order('full_name', { ascending: true })
-
-  if (error && error.message?.toLowerCase().includes('email')) {
-    const fallback = await supabase
-      .from('profiles')
-      .select('id, full_name, role, staff_id, active')
-      .order('full_name', { ascending: true })
-    return fallback
-  }
-
-  return { data, error }
 }
 
 export async function updateProfileRole(id, role) {
@@ -33,15 +23,13 @@ export async function updateProfileStaffId(id, staff_id) {
 }
 
 export async function fetchStaffOptions() {
-  for (const fields of STAFF_ROLE_FIELDS) {
-    const { data, error } = await supabase.from('staff').select(fields).order('id', { ascending: true })
-    if (!error) {
+  for (const fields of STAFF_FIELD_CANDIDATES) {
+    const result = await supabase.from('staff').select(fields).order('name', { ascending: true })
+    if (!result.error) {
       return {
-        data: (data || []).map((row) => ({
+        data: (result.data || []).map((row) => ({
           id: row.id,
-          label: row.full_name || row.name || row.id,
-          role: row.role || null,
-          active: row.active,
+          label: row.name || row.full_name || row.id,
         })),
         error: null,
       }
