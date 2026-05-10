@@ -2,7 +2,19 @@ import { useEffect, useState } from 'react'
 import PageHeader from '../components/layout/PageHeader'
 import { fetchDashboardSummary } from '../services/dashboardService'
 
-const hazardEmoji = { earthquake: '🌍', typhoon: '🌀', flood: '🌊', fire: '🔥', landslide: '⛰️', general: '⚠️' }
+function formatLabel(value) {
+  if (!value || typeof value !== 'string') return 'Unknown'
+  return value
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .replace(/\b\w/g, char => char.toUpperCase())
+}
+
+function formatDateTime(value) {
+  if (!value) return 'Unknown date'
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? 'Unknown date' : date.toLocaleString('en-PH')
+}
 
 export default function Dashboard({ weather, signal, status }) {
   const [loading, setLoading] = useState(true)
@@ -34,7 +46,9 @@ export default function Dashboard({ weather, signal, status }) {
     }
 
     loadDashboard()
-    return () => { isMounted = false }
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   return (
@@ -91,12 +105,12 @@ export default function Dashboard({ weather, signal, status }) {
         ) : (
           summary.recentIncidents.map((incident) => (
             <div key={incident.id} style={{ padding: '10px 0', borderBottom: '1px solid var(--line)' }}>
-              <p>
-                {hazardEmoji[incident.hazard_type] || '⚠️'} {incident.location} · {incident.severity} · {incident.status}
-              </p>
-              <p style={{ color: 'var(--text-muted)', fontSize: 12 }}>
-                {new Date(incident.created_at).toLocaleString('en-PH')} · Reported by {incident.reported_by}
-              </p>
+              <p><strong>Hazard:</strong> {formatLabel(incident.hazard_type)}</p>
+              <p><strong>Location:</strong> {incident.location || 'Unknown'}</p>
+              <p><strong>Severity:</strong> {formatLabel(incident.severity)}</p>
+              <p><strong>Status:</strong> {formatLabel(incident.status)}</p>
+              <p><strong>Date:</strong> {formatDateTime(incident.created_at)}</p>
+              <p><strong>Reported by:</strong> {incident.reported_by || 'Unknown'}</p>
             </div>
           ))
         )}
