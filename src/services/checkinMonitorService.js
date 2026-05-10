@@ -1,25 +1,17 @@
 import { supabase } from '../lib/supabase'
 
-const STATUS_ORDER = ['safe', 'needs_help', 'medical', 'evacuation', 'not_on_campus']
+const STATUS_KEYS = ['safe', 'needs_help', 'medical', 'evacuation', 'not_on_campus']
 
-function getTodayKey() {
+function getTodayDateKey() {
   return new Date().toISOString().slice(0, 10)
 }
 
 function getStaffName(staff) {
-  if (staff.name) return staff.name
-  if (staff.full_name) return staff.full_name
-  const full = [staff.first_name, staff.last_name].filter(Boolean).join(' ').trim()
-  return full || `Staff #${staff.id}`
+  return staff?.name || `Staff ID: ${staff?.id ?? 'Unknown'}`
 }
 
-function isActiveStaff(staff) {
-  if (!Object.prototype.hasOwnProperty.call(staff, 'active')) return true
-  return staff.active !== false
-}
-
-function toStatusCounts(checkins) {
-  const base = {
+function buildStatusCounts(checkins) {
+  const counts = {
     totalCheckedIn: checkins.length,
     safe: 0,
     needs_help: 0,
@@ -28,57 +20,67 @@ function toStatusCounts(checkins) {
     not_on_campus: 0,
   }
 
-  checkins.forEach((checkin) => {
-    if (STATUS_ORDER.includes(checkin.status)) base[checkin.status] += 1
+  checkins.forEach((item) => {
+    if (STATUS_KEYS.includes(item.status)) counts[item.status] += 1
   })
 
-  return base
+  return counts
 }
 
-export async function fetchCheckinMonitorData() {
-  const dateKey = getTodayKey()
+export async function fetchTodayCheckins() {
+  const dateKey = getTodayDateKey()
+  const { data, error } = await supabase
+    .from('checkins')
+    .select('id, created_at, staff_id, date, status')
+    .eq('date', dateKey)
+    .order('created_at', { ascending: false })
 
-  const [checkinsRes, staffRes] = await Promise.all([
-    supabase
-      .from('checkins')
-      .select('id, created_at, staff_id, date, status')
-      .eq('date', dateKey)
-      .order('created_at', { ascending: false }),
-    supabase
-      .from('staff')
-      .select('id, name, full_name, first_name, last_name, role, position, active')
-      .order('name', { ascending: true }),
-  ])
+  if (error) throw error
+  return { dateKey, checkinsToday: data || [] }
+}
 
-  const checkinsError = checkinsRes.error
-  const staffError = staffRes.error
-  if (checkinsError) throw checkinsError
+export async function fetchStaffRoster() {
+  const { data, error } = await supabase
+    .from('staff')
+    .select('id, name, role, active')
+    .eq('active', true)
+    .order('name', { ascending: true })
 
-  const checkins = checkinsRes.data || []
-  const staff = staffError ? null : (staffRes.data || []).filter(isActiveStaff)
+  if (error) throw error
+  return data || []
+}
 
-  const rosterById = new Map((staff || []).map(item => [item.id, item]))
+export async function fetchCheckinMonitorSummary() {
+  const { dateKey, checkinsToday } = await fetchTodayCheckins()
 
-  const checkinRows = checkins.map((checkin) => {
-    const roster = rosterById.get(checkin.staff_id)
+  let staffRoster = null
+  let staffRosterAvailable = false
+  try {
+    staffRoster = await fetchStaffRoster()
+    staffRosterAvailable = true
+  } catch {
+    staffRoster = null
+    staffRosterAvailable = false
+  }
+
+  const staffById = new Map((staffRoster || []).map((item) => [item.id, item]))
+  const rows = checkinsToday.map((item) => {
+    const staff = staffById.get(item.staff_id)
     return {
-      ...checkin,
-      staffName: roster ? getStaffName(roster) : `Staff #${checkin.staff_id}`,
-      role: roster?.role || roster?.position || 'Unknown role',
+      ...item,
+      staffName: staff ? getStaffName(staff) : `Staff ID: ${item.staff_id}`,
     }
   })
 
-  const statusCounts = toStatusCounts(checkins)
-  const notCheckedInCount = staff ? Math.max(staff.length - checkins.length, 0) : null
+  const statusCounts = buildStatusCounts(checkinsToday)
+  const notCheckedInCount = staffRosterAvailable ? Math.max(staffRoster.length - checkinsToday.length, 0) : null
 
   return {
     dateKey,
-    staffAvailable: Boolean(staff),
-    staffCount: staff?.length ?? null,
-    statusCounts: {
-      ...statusCounts,
-      not_checked_in: notCheckedInCount,
-    },
-    checkinRows,
+    checkinsToday: rows,
+    staffRoster,
+    statusCounts,
+    notCheckedInCount,
+    staffRosterAvailable,
   }
 }
