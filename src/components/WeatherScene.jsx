@@ -1,14 +1,15 @@
 function toSceneType(weather) {
   if (!weather || weather.provider === 'Fallback') return 'unavailable'
+
   const condition = String(weather.condition || weather.description || '').toLowerCase()
   const windKph = Number(weather.windKph || 0)
   const rainChance = Number(weather.rainChance || 0)
+  const precipMm = Number(weather.precipMm || 0)
 
   if (condition.includes('thunder')) return 'thunderstorm'
-  if (condition.includes('rain') || condition.includes('drizzle') || condition.includes('shower')) {
-    return rainChance >= 70 ? 'heavyRain' : 'lightRain'
-  }
-  if (windKph >= 30) return 'windy'
+  if (precipMm >= 10 || rainChance >= 80) return 'heavyRain'
+  if (condition.includes('rain') || condition.includes('drizzle') || condition.includes('shower')) return 'lightRain'
+  if (windKph >= 35) return 'windy'
   if (condition.includes('partly')) return 'partlyCloudy'
   if (condition.includes('cloud') || condition.includes('mist') || condition.includes('fog') || condition.includes('overcast')) return 'cloudy'
   if (condition.includes('sun') || condition.includes('clear')) return 'clear'
