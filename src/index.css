@@ -288,3 +288,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 .monitor-table { width: 100%; border-collapse: collapse; }
 .monitor-table th, .monitor-table td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #dce4ee; font-size: .9rem; }
 .monitor-table th { font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; color: #60758f; }
+
+.incident-filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.incident-note-cell { display: grid; gap: 8px; min-width: 220px; }
+@media (max-width: 900px) { .incident-filters { grid-template-columns: 1fr; } }
