@@ -14,38 +14,58 @@ export function useAuth() {
       return null
     }
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, full_name, role, staff_id, active')
-      .eq('id', authUser.id)
-      .maybeSingle()
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, full_name, role, staff_id, active')
+        .eq('id', authUser.id)
+        .maybeSingle()
 
-    if (error) {
-      console.error('Failed to load profile:', error.message)
+      if (error) {
+        console.error('Failed to load profile:', error)
+        setProfile(null)
+        return null
+      }
+
+      setProfile(data ?? null)
+      return data ?? null
+    } catch (error) {
+      console.error('Failed to load profile:', error)
       setProfile(null)
       return null
     }
-
-    setProfile(data ?? null)
-    return data ?? null
   }, [])
 
   useEffect(() => {
     const initAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      const nextUser = session?.user ?? null
-      setUser(nextUser)
-      await loadProfile(nextUser)
-      setLoading(false)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        const nextUser = session?.user ?? null
+        setUser(nextUser)
+        await loadProfile(nextUser)
+      } catch (error) {
+        console.error('Failed to initialize auth session:', error)
+        setUser(null)
+        setProfile(null)
+      } finally {
+        setLoading(false)
+      }
     }
 
     initAuth()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const nextUser = session?.user ?? null
-      setUser(nextUser)
-      await loadProfile(nextUser)
-      setLoading(false)
+      try {
+        const nextUser = session?.user ?? null
+        setUser(nextUser)
+        await loadProfile(nextUser)
+      } catch (error) {
+        console.error('Failed during auth state change:', error)
+        setUser(session?.user ?? null)
+        setProfile(null)
+      } finally {
+        setLoading(false)
+      }
     })
 
     return () => subscription.unsubscribe()
@@ -57,7 +77,14 @@ export function useAuth() {
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    try {
+      await supabase.auth.signOut()
+    } catch (error) {
+      console.error('Failed to sign out:', error)
+    } finally {
+      setUser(null)
+      setProfile(null)
+    }
   }
 
   const activeRole = profile?.active === false ? DEFAULT_ROLE : (profile?.role ?? DEFAULT_ROLE)
