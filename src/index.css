@@ -488,3 +488,21 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   .weather-presentation-hero,
   .weather-presentation-main { grid-template-columns: 1fr; }
 }
+
+.public-page { min-height: 100vh; background: var(--bg); color: var(--text); overflow-y: auto; }
+.public-header { position: sticky; top: 0; background: white; border-bottom: 1px solid var(--border); padding: 16px; z-index: 50; }
+.public-header h1 { color: var(--navy); font-size: 1.1rem; margin-bottom: 10px; }
+.public-nav { display: flex; flex-wrap: wrap; gap: 10px; }
+.public-nav a { color: var(--navy); font-weight: 700; text-decoration: none; font-size: 0.9rem; }
+.public-hero { background: linear-gradient(135deg, #ffffff, #eaf2ff); border-bottom: 1px solid var(--border); }
+.public-section { max-width: 1080px; margin: 0 auto; padding: 24px 16px; }
+.public-section h3 { color: var(--navy); margin-bottom: 12px; }
+.public-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.public-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.public-update-card, .public-guideline-card, .public-contact-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; box-shadow: var(--shadow); }
+.public-update-card h4, .public-guideline-card h4, .public-contact-card h4 { margin-bottom: 6px; color: var(--navy); }
+.public-guideline-card ul { padding-left: 18px; }
+.public-guideline-card li { margin-bottom: 4px; }
+.public-contact-card a { color: var(--navy); font-weight: 700; text-decoration: none; margin-right: 10px; font-size: 0.9rem; }
+.public-footer { background: #0f1f38; color: #dbe5f3; padding: 20px 16px; text-align: center; }
+.public-footer a { color: #fff; }
