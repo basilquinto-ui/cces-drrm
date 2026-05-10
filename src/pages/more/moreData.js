@@ -1,4 +1,4 @@
-export const CAT_ICONS = { medical: '🏥', fire: '🔥', equipment: '🔧', supplies: '📦' }
+export const CAT_ICONS = { medical: 'Medical', fire: 'Fire', equipment: 'Equipment', supplies: 'Supplies' }
 export const CAT_ORDER = ['medical', 'fire', 'equipment', 'supplies']
 export const HAZARD_ICONS = { earthquake: '🌍', fire: '🔥', flood: '🌊', typhoon: '🌀' }
 
@@ -20,10 +20,10 @@ export const CONTACT_SECTIONS = [
 ]
 
 export const MORE_MENU_ITEMS = (isAdmin) => [
-  { id: 'evacuation', icon: '🗺️', label: 'Evacuation Routes', sub: 'Routes per hazard type' },
-  { id: 'resources', icon: '📦', label: 'Resource Inventory', sub: 'Emergency supplies' },
-  { id: 'contacts', icon: '☎️', label: 'Emergency Contacts', sub: 'One-tap call' },
-  { id: 'drills', icon: '📅', label: 'Drill History', sub: 'Past drill records' },
-  { id: 'admin', icon: '⚙️', label: 'Admin Panel', sub: isAdmin ? '✅ Logged in' : 'Coordinator only' },
-  { id: 'about', icon: 'ℹ️', label: 'About', sub: 'App info & contacts' },
+  { id: 'evacuation', icon: '', label: 'Evacuation Routes', sub: 'Routes per hazard type' },
+  { id: 'resources', icon: '', label: 'Resource Inventory', sub: 'Emergency supplies' },
+  { id: 'contacts', icon: '', label: 'Emergency Contacts', sub: 'One-tap call' },
+  { id: 'drills', icon: '', label: 'Drill History', sub: 'Past drill records' },
+  { id: 'admin', icon: '', label: 'Admin Panel', sub: isAdmin ? 'Logged in' : 'Coordinator only' },
+  { id: 'about', icon: '', label: 'About', sub: 'App info & contacts' },
 ]
