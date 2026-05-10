@@ -283,3 +283,8 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   .portal-sidebar.collapsed .side-link span, .portal-sidebar.collapsed .sidebar-brand { display: initial; font-size: inherit; }
   .dashboard-grid { grid-template-columns: 1fr; }
 }
+
+.monitor-table-wrap { overflow-x: auto; }
+.monitor-table { width: 100%; border-collapse: collapse; }
+.monitor-table th, .monitor-table td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #dce4ee; font-size: .9rem; }
+.monitor-table th { font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; color: #60758f; }
