@@ -7,10 +7,10 @@ export default function AboutView() {
       <h2 style={{ fontSize: 18, fontWeight: 900, color: 'var(--navy)' }}>CCES DRRM Portal</h2>
       <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>Camp Crame Elementary School</p>
       <div style={{ margin: '16px 0', padding: 16, background: 'var(--bg)', borderRadius: 12, fontSize: 12, color: 'var(--text-muted)', lineHeight: 2.2, textAlign: 'left' }}>
-        📱 Version 2.0.0<br />🏫 Est. 1952 · QC District XVII<br />
-        📍 Castañeda St., Camp Crame, QC<br />
-        📞 (02) 7754-2648<br />📧 campcrame_es@yahoo.com.ph<br />
-        🛠️ Built with React + Supabase
+        Version 2.0.0<br />School established 1952 · QC District XVII<br />
+        Castañeda St., Camp Crame, QC<br />
+        Telephone: (02) 7754-2648<br />Email: campcrame_es@yahoo.com.ph<br />
+        Built with React + Supabase
       </div>
     </div>
   )

@@ -9,7 +9,7 @@ const skyClasses = {
 }
 
 const statusBadgeClass = { normal: 'status-normal', watch: 'status-watch', alert: 'status-alert' }
-const statusLabel = { normal: '🟢 Normal', watch: '🟡 Watch', alert: '🔴 Alert' }
+const statusLabel = { normal: 'Normal', watch: 'Watch', alert: 'Alert' }
 
 export default function Header({ weather, status }) {
   const rainRef = useRef(null)
@@ -29,7 +29,7 @@ export default function Header({ weather, status }) {
   }, [weather.type])
 
   const weatherPill = weather.temp
-    ? `${weather.type === 'sunny' ? '☀️' : weather.type === 'rainy' ? '🌧️' : weather.type === 'stormy' ? '⛈️' : '⛅'} ${weather.temp}° · ${weather.description}`
+    ? `${weather.temp}° · ${weather.description}`
     : '⛅ Loading...'
 
   return (
