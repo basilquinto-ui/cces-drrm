@@ -19,7 +19,7 @@ export default function Login({ onLogin }) {
     setLoading(false)
     if (error) {
       if (error.message?.includes('Invalid')) toast('❌ Incorrect email or password.', 'error')
-      else if (error.message?.includes('confirm')) toast('📧 Please confirm your email first.', 'error')
+      else if (error.message?.includes('confirm')) toast('Please confirm your email first.', 'error')
       else toast('❌ Login failed. Try again.', 'error')
     }
   }
@@ -55,7 +55,7 @@ export default function Login({ onLogin }) {
         <h1 style={{ color: 'white', fontSize: 22, fontWeight: 900, fontFamily: 'Poppins,sans-serif', marginTop: 14, textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>CCES DRRM Portal</h1>
         <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12, marginTop: 4 }}>Camp Crame Elementary School</p>
         <div style={{ marginTop: 8, background: 'rgba(232,160,32,0.2)', border: '1px solid rgba(232,160,32,0.4)', borderRadius: 20, padding: '4px 14px', display: 'inline-block', fontSize: 11, color: '#E8A020', fontWeight: 700 }}>
-          🔐 Authorized Personnel Only
+          Authorized Personnel Only
         </div>
       </div>
 
@@ -66,14 +66,14 @@ export default function Login({ onLogin }) {
         padding: 28, width: '100%', maxWidth: 380, position: 'relative', zIndex: 2,
         boxShadow: '0 20px 60px rgba(0,0,0,0.4)'
       }}>
-        <h2 style={{ color: 'white', fontSize: 18, fontWeight: 800, marginBottom: 6 }}>Welcome back 👋</h2>
+        <h2 style={{ color: 'white', fontSize: 18, fontWeight: 800, marginBottom: 6 }}>Welcome back</h2>
         <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 24 }}>Sign in with your school account</p>
 
         {/* Email */}
         <div style={{ marginBottom: 14 }}>
           <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>Email Address</label>
           <div style={{ position: 'relative' }}>
-            <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 16 }}>📧</span>
+            <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 16 }}>EM</span>
             <input
               type="email"
               value={email}
@@ -96,7 +96,7 @@ export default function Login({ onLogin }) {
         <div style={{ marginBottom: 24 }}>
           <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>Password</label>
           <div style={{ position: 'relative' }}>
-            <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 16 }}>🔑</span>
+            <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 16 }}>PW</span>
             <input
               type={showPass ? 'text' : 'password'}
               value={password}
@@ -115,7 +115,7 @@ export default function Login({ onLogin }) {
             <button
               onClick={() => setShowPass(!showPass)}
               style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, opacity: 0.6 }}>
-              {showPass ? '🙈' : '👁️'}
+              {showPass ? 'Hide' : 'Show'}
             </button>
           </div>
         </div>
@@ -131,13 +131,13 @@ export default function Login({ onLogin }) {
             fontFamily: 'Nunito,sans-serif', transition: 'all 0.2s',
             boxShadow: loading ? 'none' : '0 4px 20px rgba(232,160,32,0.4)'
           }}>
-          {loading ? '⏳ Signing in...' : '🔐 Sign In'}
+          {loading ? 'Signing in...' : 'Sign In'}
         </button>
 
         {/* Notice */}
         <div style={{ marginTop: 20, padding: '12px 14px', background: 'rgba(255,255,255,0.05)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.08)' }}>
           <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', lineHeight: 1.6 }}>
-            🏫 Access is limited to CCES staff only.<br />
+            Access is limited to CCES staff only.<br />
             Contact your DRRM Coordinator for an account.<br />
             <span style={{ color: 'rgba(255,255,255,0.3)' }}>campcrame_es@yahoo.com.ph</span>
           </p>

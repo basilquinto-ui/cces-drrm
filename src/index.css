@@ -246,7 +246,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 /* BOTTOM NAV */
 .bottom-nav { height: var(--nav-height); background: white; border-top: 1px solid var(--border); display: flex; align-items: stretch; flex-shrink: 0; box-shadow: 0 -4px 20px rgba(27,58,107,0.12); position: relative; z-index: 100; }
 .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; position: relative; padding: 8px 4px; border: none; background: none; transition: all 0.2s; }
-.nav-icon { font-size: 22px; transition: transform 0.2s; }
+.nav-icon { min-width: 24px; height: 24px; border-radius: 6px; border: 1px solid #c9d6e6; background: #f5f8fc; color: #1a3559; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; letter-spacing: .02em; transition: transform 0.2s; }
 .nav-label { font-size: 10px; font-weight: 700; color: var(--text-muted); }
 .nav-item.active .nav-label { color: var(--navy); }
 .nav-item.active .nav-icon { transform: scale(1.15); }
@@ -508,3 +508,5 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 .public-footer a { color: #fff; }
 
 .public-location-placeholder { color: var(--text-muted); font-size: 0.9rem; font-weight: 700; }
+
+.icon-badge { display: inline-flex; min-width: 24px; height: 20px; border-radius: 6px; border: 1px solid #c9d6e6; background: #f5f8fc; color: #1a3559; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; margin-right: 6px; }
