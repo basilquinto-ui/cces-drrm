@@ -25,8 +25,8 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
-#root { height: 100vh; }
+html, body { min-height: 100%; font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; overflow-y: auto; }
+#root { min-height: 100vh; }
 
 /* APP SHELL */
 .app { height: 100vh; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; background: var(--bg); position: relative; }
@@ -260,12 +260,12 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 .side-link.active, .side-link:hover { background: rgba(255,255,255,.14); color: #fff; }
 .portal-sidebar.collapsed .side-link span { display: none; }
 .portal-sidebar.collapsed .sidebar-brand { font-size: 0; }
-.portal-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.portal-main { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
 .portal-topbar { background: #fff; border-bottom: 1px solid #dce4ee; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; }
 .portal-topbar h1 { margin: 0; font-size: 1.05rem; color: #12243c; }
 .portal-topbar p { margin: 2px 0 0; font-size: .85rem; color: #4e617b; }
 .topbar-meta { display: flex; align-items: center; gap: 10px; }
-.portal-content { padding: 20px; }
+.portal-content { padding: 20px; overflow-y: visible; }
 .page-header h2 { margin: 0; color: #12243c; }
 .page-header p { margin: 6px 0 0; color: #60758f; }
 .dashboard-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
@@ -489,7 +489,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   .weather-presentation-main { grid-template-columns: 1fr; }
 }
 
-.public-page { min-height: 100vh; background: var(--bg); color: var(--text); overflow-y: auto; }
+.public-page { min-height: 100vh; background: var(--bg); color: var(--text); overflow-x: hidden; }
 .public-header { position: sticky; top: 0; background: white; border-bottom: 1px solid var(--border); padding: 16px; z-index: 50; }
 .public-header h1 { color: var(--navy); font-size: 1.1rem; margin-bottom: 10px; }
 .public-nav { display: flex; flex-wrap: wrap; gap: 10px; }
