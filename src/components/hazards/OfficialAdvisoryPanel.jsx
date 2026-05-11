@@ -7,6 +7,12 @@ function formatDateTime(value) {
   return Number.isNaN(date.getTime()) ? 'N/A' : date.toLocaleString('en-PH')
 }
 
+const cleanUrlOrNull = (value) => {
+  const trimmed = value.trim()
+  if (!trimmed) return null
+  return trimmed.startsWith('http://') || trimmed.startsWith('https://') ? trimmed : null
+}
+
 export default function OfficialAdvisoryPanel({ isAdmin = false }) {
   const [advisories, setAdvisories] = useState([])
   const [loading, setLoading] = useState(true)
@@ -39,7 +45,7 @@ export default function OfficialAdvisoryPanel({ isAdmin = false }) {
       title: formData.title.trim(),
       message: formData.message.trim(),
       affected_area: formData.affected_area.trim() || null,
-      source_url: formData.source_url.trim() || null,
+      source_url: cleanUrlOrNull(formData.source_url),
       effective_at: formData.effective_at || null,
       expires_at: formData.expires_at || null
     }
