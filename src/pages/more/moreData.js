@@ -20,10 +20,10 @@ export const CONTACT_SECTIONS = [
 ]
 
 export const MORE_MENU_ITEMS = (isAdmin) => [
-  { id: 'evacuation', icon: '', label: 'Evacuation Routes', sub: 'Routes per hazard type' },
-  { id: 'resources', icon: '', label: 'Resource Inventory', sub: 'Emergency supplies' },
-  { id: 'contacts', icon: '', label: 'Emergency Contacts', sub: 'One-tap call' },
-  { id: 'drills', icon: '', label: 'Drill History', sub: 'Past drill records' },
-  { id: 'admin', icon: '', label: 'Admin Panel', sub: isAdmin ? 'Logged in' : 'Coordinator only' },
-  { id: 'about', icon: '', label: 'About', sub: 'App info & contacts' },
+  { id: 'evacuation', icon: 'RT', label: 'Evacuation Routes', sub: 'Routes per hazard type' },
+  { id: 'resources', icon: 'RS', label: 'Resource Inventory', sub: 'Emergency supplies' },
+  { id: 'contacts', icon: 'CT', label: 'Emergency Contacts', sub: 'One-tap call' },
+  { id: 'drills', icon: 'DR', label: 'Drill History', sub: 'Past drill records' },
+  { id: 'admin', icon: 'AD', label: 'Admin Panel', sub: isAdmin ? 'Logged in' : 'Coordinator only' },
+  { id: 'about', icon: 'AB', label: 'About', sub: 'App info & contacts' },
 ]
